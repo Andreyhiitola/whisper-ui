@@ -78,13 +78,27 @@
   <div class="btn-row">
     <button class="btn btn-blue" id="startBtn" onclick="startAll()">Транскрибировать все</button>
     <button class="btn btn-orange" onclick="clearList()">Очистить список</button>
+    <button class="btn btn-green" id="folderBtn" onclick="pickFolder()" title="Выбрать папку для автосохранения результатов">📁 Папка сохранения</button>
   </div>
+  <div id="folder-info" style="font-size:13px;color:#888;margin-top:8px;"></div>
 </div>
 
 <div id="results"></div>
 
 <script>
 let files = [];
+let outputDirHandle = null;
+
+async function pickFolder() {
+  if (!window.showDirectoryPicker) {
+    alert('Ваш браузер не поддерживает выбор папки. Используйте Chrome или Edge.');
+    return;
+  }
+  try {
+    outputDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    document.getElementById('folder-info').textContent = 'Папка: ' + outputDirHandle.name;
+  } catch(e) {}
+}
 
 function fmtSize(b) {
   return (b/1024/1024).toFixed(1) + ' МБ';
@@ -232,6 +246,7 @@ async function processFile(item) {
     document.getElementById('text-' + item.id).textContent = text;
     item.result = text;
     item.outputFormat = output;
+    await autoSave(item);
     setStatus(item.id, 'done', 'готово');
 
   } catch(e) {
@@ -239,6 +254,28 @@ async function processFile(item) {
     document.getElementById('text-' + item.id).textContent = e.message;
     setStatus(item.id, 'err', 'ошибка');
   }
+}
+
+async function autoSave(item) {
+  const ext = item.outputFormat || 'txt';
+  const name = item.file.name.replace(/\.[^.]+$/, '') + '.' + ext;
+  if (outputDirHandle) {
+    try {
+      const fh = await outputDirHandle.getFileHandle(name, { create: true });
+      const writable = await fh.createWritable();
+      await writable.write(item.result);
+      await writable.close();
+      const etaEl = document.getElementById('eta-' + item.id);
+      if (etaEl) etaEl.textContent = 'Сохранено: ' + name;
+      return;
+    } catch(e) {}
+  }
+  // fallback — обычное скачивание
+  const blob = new Blob([item.result], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
 }
 
 function setStatus(id, cls, text) {
