@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whisper — Транскрибация</title>
+<style>
+  body { font-family: sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f5f5f5; }
+  h1 { color: #333; }
+  .card { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
+  label { font-weight: bold; display: block; margin-top: 12px; }
+  input[type=file] { display: block; margin: 8px 0; }
+  select { padding: 8px 12px; font-size: 14px; }
+  .row { display: flex; gap: 24px; margin-top: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .btn { border: none; border-radius: 4px; cursor: pointer; padding: 9px 20px; font-size: 14px; color: white; }
+  .btn-blue { background: #2196F3; } .btn-blue:hover { background: #1976D2; }
+  .btn-green { background: #4CAF50; } .btn-green:hover { background: #388E3C; }
+  .btn-orange { background: #FF9800; } .btn-orange:hover { background: #F57C00; }
+  .btn:disabled { background: #aaa; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+  /* file queue */
+  .file-list { margin-top: 12px; }
+  .file-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f9f9f9; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
+  .file-item .name { flex: 1; }
+  .file-item .meta { color: #888; white-space: nowrap; }
+  .file-item .status { font-weight: bold; white-space: nowrap; }
+  .status-wait { color: #aaa; }
+  .status-running { color: #FF9800; }
+  .status-done { color: #4CAF50; }
+  .status-err { color: #f44336; }
+
+  /* progress */
+  .progress-wrap { margin-top: 6px; display: none; }
+  .progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  .fill-blue { background: #2196F3; }
+  .fill-orange { background: #FF9800; animation: ind 2s linear infinite; width: 35% !important; }
+  .fill-green { background: #4CAF50; width: 100% !important; animation: none; }
+  @keyframes ind { 0% { margin-left:-35%; } 100% { margin-left:100%; } }
+  .eta-text { font-size: 12px; color: #666; }
+
+  /* result */
+  .result-block { margin-top: 10px; }
+  .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-weight: bold; }
+  .result-area { white-space: pre-wrap; background: #f9f9f9; padding: 14px; border-radius: 4px; border: 1px solid #ddd; min-height: 80px; font-size: 13px; max-height: 300px; overflow-y: auto; }
+</style>
+</head>
+<body>
+<h1>Whisper — Транскрибация речи</h1>
+
+<div class="card">
+  <label>Аудиофайлы (можно выбрать несколько):</label>
+  <input type="file" id="fileInput" accept="audio/*,video/*" multiple onchange="addFiles()">
+
+  <div class="row">
+    <div>
+      <label>Язык:</label>
+      <select id="lang">
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+        <option value="uk">Українська</option>
+        <option value="">Авто</option>
+      </select>
+    </div>
+    <div>
+      <label>Формат:</label>
+      <select id="output">
+        <option value="txt">Текст (без таймкодов)</option>
+        <option value="srt">SRT (с таймкодами)</option>
+        <option value="vtt">VTT (с таймкодами)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="file-list" id="fileList"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-blue" id="startBtn" onclick="startAll()">Транскрибировать все</button>
+    <button class="btn btn-orange" onclick="clearList()">Очистить список</button>
+  </div>
+</div>
+
+<div id="results"></div>
+
+<script>
+let files = [];
+
+function fmtSize(b) {
+  return (b/1024/1024).toFixed(1) + ' МБ';
+}
+function fmtTime(sec) {
+  sec = Math.round(sec);
+  if (sec < 60) return sec + ' сек';
+  return Math.floor(sec/60) + ' мин ' + (sec%60) + ' сек';
+}
+
+function addFiles() {
+  const input = document.getElementById('fileInput');
+  for (const f of input.files) {
+    if (files.find(x => x.file.name === f.name && x.file.size === f.size)) continue;
+    const id = Date.now() + Math.random();
+    files.push({ id, file: f, duration: 0, status: 'wait' });
+    renderFileItem(files[files.length-1]);
+    detectDuration(files[files.length-1]);
+  }
+  input.value = '';
+}
+
+function detectDuration(item) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      ctx.decodeAudioData(e.target.result, buf => {
+        item.duration = buf.duration;
+        const el = document.getElementById('meta-' + item.id);
+        if (el) {
+          const m = Math.floor(item.duration/60), s = Math.floor(item.duration%60);
+          el.textContent = fmtSize(item.file.size) + ' | ' + m + ':' + String(s).padStart(2,'0');
+        }
+      }, () => {});
+    } catch(e) {}
+  };
+  reader.readAsArrayBuffer(item.file);
+}
+
+function renderFileItem(item) {
+  const list = document.getElementById('fileList');
+  const div = document.createElement('div');
+  div.className = 'file-item';
+  div.id = 'item-' + item.id;
+  div.innerHTML = `
+    <span class="name">${item.file.name}</span>
+    <span class="meta" id="meta-${item.id}">${fmtSize(item.file.size)}</span>
+    <span class="status status-wait" id="status-${item.id}">ожидание</span>
+  `;
+  list.appendChild(div);
+}
+
+function clearList() {
+  files = [];
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('results').innerHTML = '';
+}
+
+async function startAll() {
+  if (!files.length) { alert('Добавьте файлы'); return; }
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+
+  for (const item of files) {
+    if (item.status === 'done') continue;
+    await processFile(item);
+  }
+  btn.disabled = false;
+}
+
+async function processFile(item) {
+  const lang = document.getElementById('lang').value;
+  const output = document.getElementById('output').value;
+
+  setStatus(item.id, 'running', 'обработка...');
+
+  let resultBlock = document.getElementById('result-' + item.id);
+  if (!resultBlock) {
+    resultBlock = document.createElement('div');
+    resultBlock.className = 'card result-block';
+    resultBlock.id = 'result-' + item.id;
+    resultBlock.innerHTML = `
+      <div class="result-header">
+        <span>${item.file.name}</span>
+        <button class="btn btn-green" onclick="downloadResult('${item.id}', '${item.file.name}', '${output}')">Скачать</button>
+        <button class="btn btn-blue" onclick="copyResult('${item.id}')">Копировать</button>
+      </div>
+      <div class="progress-wrap" id="prog-${item.id}" style="display:block">
+        <div class="progress-bar"><div class="progress-fill fill-blue" id="ubar-${item.id}" style="width:0%"></div></div>
+        <div class="eta-text" id="eta-${item.id}">Загрузка файла...</div>
+      </div>
+      <div class="result-area" id="text-${item.id}"></div>
+    `;
+    document.getElementById('results').appendChild(resultBlock);
+  }
+
+  const form = new FormData();
+  form.append('audio_file', item.file);
+  let url = '/asr?output=' + output;
+  if (lang) url += '&language=' + lang;
+
+  try {
+    const text = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      let elapsed = 0, iv = null;
+
+      xhr.upload.onprogress = e => {
+        if (e.lengthComputable) {
+          const pct = Math.round(e.loaded/e.total*100);
+          document.getElementById('ubar-' + item.id).style.width = pct + '%';
+          document.getElementById('eta-' + item.id).textContent = 'Загрузка: ' + pct + '%';
+        }
+      };
+
+      xhr.upload.onload = () => {
+        const bar = document.getElementById('ubar-' + item.id);
+        bar.className = 'progress-fill fill-orange';
+        const estimated = item.duration > 0 ? item.duration * 0.4 : null;
+        iv = setInterval(() => {
+          elapsed++;
+          const etaEl = document.getElementById('eta-' + item.id);
+          if (!etaEl) { clearInterval(iv); return; }
+          if (estimated) {
+            const left = Math.max(0, estimated - elapsed);
+            etaEl.textContent = 'Прошло: ' + fmtTime(elapsed) + (left > 0 ? '  |  Осталось: ~' + fmtTime(left) : '  |  Заканчиваем...');
+          } else {
+            etaEl.textContent = 'Транскрибация... прошло ' + fmtTime(elapsed);
+          }
+        }, 1000);
+      };
+
+      xhr.onload = () => {
+        if (iv) clearInterval(iv);
+        if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.responseText);
+        else reject(new Error('Ошибка: ' + xhr.status));
+      };
+      xhr.onerror = () => { if(iv) clearInterval(iv); reject(new Error('Ошибка соединения')); };
+      xhr.send(form);
+    });
+
+    document.getElementById('ubar-' + item.id).className = 'progress-fill fill-green';
+    document.getElementById('eta-' + item.id).textContent = 'Готово!';
+    document.getElementById('text-' + item.id).textContent = text;
+    item.result = text;
+    item.outputFormat = output;
+    setStatus(item.id, 'done', 'готово');
+
+  } catch(e) {
+    document.getElementById('eta-' + item.id).textContent = e.message;
+    document.getElementById('text-' + item.id).textContent = e.message;
+    setStatus(item.id, 'err', 'ошибка');
+  }
+}
+
+function setStatus(id, cls, text) {
+  const el = document.getElementById('status-' + id);
+  if (!el) return;
+  el.className = 'status status-' + cls;
+  el.textContent = text;
+}
+
+function downloadResult(id, filename, fmt) {
+  const item = files.find(x => String(x.id) === String(id));
+  if (!item || !item.result) return;
+  const ext = item.outputFormat || fmt || 'txt';
+  const blob = new Blob([item.result], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename.replace(/\.[^.]+$/, '') + '.' + ext;
+  a.click();
+}
+
+function copyResult(id) {
+  const el = document.getElementById('text-' + id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => alert('Скопировано!'));
+}
+</script>
+</body>
+</html>
