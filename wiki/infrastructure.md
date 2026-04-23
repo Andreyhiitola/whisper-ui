@@ -13,6 +13,7 @@
 |-----------|-------|------|
 | whisper | onerahmet/openai-whisper-asr-webservice | 9000 |
 | whisper-ui | nginx:alpine | 8090 |
+| amnezia-vpn | amneziavpn/amnezia-wg | 1080 (SOCKS) |
 
 Whisper и Nginx — стандартные образы, сборка не нужна.
 
@@ -24,7 +25,19 @@ Whisper и Nginx — стандартные образы, сборка не ну
   whisper_ui/html/index.html      — веб-интерфейс
   whisper_ui/conf/default.conf    — nginx конфиг
   wisper_/                        — кэш моделей Whisper
+  compose/Amnezia_VPN/            — compose и конфиг AmneziaWG
+  compose/Amnezia_VPN/config/awg0.conf — клиентский конфиг VPN (не в git)
 ```
+
+## AmneziaWG VPN
+
+Клиент AmneziaWG запущен на OMV, туннелирует трафик через внешний сервер.
+
+- Compose: `/srv/.../compose/Amnezia_VPN/Amnezia_VPN.yml`
+- Конфиг: `/srv/.../compose/Amnezia_VPN/config/awg0.conf` (из `vpn://` URI)
+- Порт: 1080/tcp (SOCKS5 прокси через туннель)
+- Требует: `privileged: true`, `devices: /dev/net/tun`, убрать DNS и `::/0` из AllowedIPs
+- Команда запуска: `wg-quick up /etc/amneziawg/awg0.conf && sleep infinity`
 
 ## Nginx
 
@@ -39,14 +52,20 @@ Groq и DeepSeek вызываются напрямую из браузера (fe
 
 ## Деплой
 
+**С локального компьютера** (если SSH работает):
 ```bash
 cd ~/Desktop/whisper-ui
 ./deploy.sh "описание изменений"
 ```
 
-Делает:
-1. `git commit` + `git push` (если есть изменения)
-2. `scp` — копирует `index.html`, `default.conf`, `whisper.yml` на сервер
+**С сервера** (через CTerm OMV):
+```bash
+/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper-ui/update.sh
+```
+
+`update.sh` делает:
+1. `git pull` — забирает изменения с GitHub
+2. `cp` — копирует `index.html` и `default.conf` в рабочую папку nginx
 3. `docker restart whisper-ui` — перезапускает nginx
 
 ## Репозиторий

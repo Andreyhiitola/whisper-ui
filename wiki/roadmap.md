@@ -15,6 +15,10 @@
 - [x] DeepSeek API — альтернативный провайдер анализа (GPT-4o уровень)
 - [x] Выбор провайдера в интерфейсе (Groq / DeepSeek)
 - [x] Groq Vision — OCR картинок для обоих провайдеров
+- [x] Кнопка "Сохранить чат" — скачать переписку с ИИ в .txt
+- [x] Исправлено копирование на HTTP (без HTTPS clipboard API)
+- [x] update.sh — серверный скрипт деплоя через git pull
+- [x] AmneziaWG VPN на OMV — docker compose с конфигом из vpn:// URI
 
 ## Планируется
 
