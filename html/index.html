@@ -173,7 +173,7 @@ textarea { resize: vertical; }
           <option value="deepseek-chat">deepseek-chat — универсальный</option>
           <option value="deepseek-reasoner">deepseek-reasoner — с рассуждением</option>
         </select>
-        <div class="info">При выборе DeepSeek — картинки распознаются локально через Tesseract (без отправки на внешние серверы).</div>
+        <div class="info">Картинки со сценарием распознаются через Groq Vision — для этого также нужен Groq API ключ.</div>
       </div>
 
       <label>Системный промпт (инструкция для ИИ):</label>
@@ -354,29 +354,16 @@ async function loadScenarioFile() {
     status.textContent = 'PDF загружен (' + pdf.numPages + ' стр.)';
 
   } else if (file.type.startsWith('image/')) {
-    const provider = document.getElementById('llmProvider').value;
+    const key = document.getElementById('groq-key').value;
+    if (!key) { status.textContent = 'Для чтения картинок нужен Groq API ключ (бесплатно на console.groq.com)'; return; }
     const b64 = await fileToBase64(file);
-
-    if (provider === 'deepseek') {
-      status.textContent = 'Распознаю локально через Tesseract...';
-      try {
-        const text = await tesseractOCR(b64);
-        document.getElementById('scenario').value = text;
-        status.textContent = 'Текст распознан локально (Tesseract)';
-      } catch(e) {
-        status.textContent = 'Ошибка OCR: ' + e.message;
-      }
-    } else {
-      const key = document.getElementById('groq-key').value;
-      if (!key) { status.textContent = 'Введите API ключ Groq для чтения картинок'; return; }
-      status.textContent = 'Читаю текст через Groq Vision...';
-      try {
-        const text = await groqVision(key, b64, file.type, 'Прочитай весь текст с этого изображения. Верни только текст, без комментариев.');
-        document.getElementById('scenario').value = text;
-        status.textContent = 'Текст извлечён через Groq Vision';
-      } catch(e) {
-        status.textContent = 'Ошибка Groq Vision: ' + e.message;
-      }
+    status.textContent = 'Читаю текст через Groq Vision...';
+    try {
+      const text = await groqVision(key, b64, file.type, 'Прочитай весь текст с этого изображения. Верни только текст, без комментариев.');
+      document.getElementById('scenario').value = text;
+      status.textContent = 'Текст извлечён через Groq Vision';
+    } catch(e) {
+      status.textContent = 'Ошибка Groq Vision: ' + e.message;
     }
 
   } else {
@@ -392,19 +379,6 @@ function fileToBase64(file) {
     r.onerror = rej;
     r.readAsDataURL(file);
   });
-}
-
-// ===== OCR (Tesseract via server) =====
-async function tesseractOCR(b64) {
-  const res = await fetch('/ocr', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: b64 })
-  });
-  if (!res.ok) throw new Error('Сервер OCR недоступен (' + res.status + ')');
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return data.text;
 }
 
 // ===== GROQ API =====
