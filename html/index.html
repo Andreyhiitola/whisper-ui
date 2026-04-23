@@ -222,6 +222,7 @@ textarea { resize: vertical; }
         <textarea id="user-input" placeholder="Задайте вопрос или нажмите Анализировать..." onkeydown="handleKey(event)" rows="1"></textarea>
         <button class="btn btn-green" onclick="analyze()">Анализировать</button>
         <button class="btn btn-blue" onclick="sendMessage()">Отправить</button>
+        <button class="btn btn-orange" onclick="saveChat()">Сохранить чат</button>
       </div>
     </div>
   </div>
@@ -529,6 +530,22 @@ function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
 
+function saveChat() {
+  const msgs = document.querySelectorAll('#messages .msg');
+  if (!msgs.length) return;
+  let text = '';
+  msgs.forEach(m => {
+    const role = m.classList.contains('user') ? 'Проверяющий' : 'Ассистент';
+    const content = m.textContent.trim();
+    if (content) text += `[${role}]\n${content}\n\n`;
+  });
+  const date = new Date().toISOString().slice(0,16).replace('T','_').replace(':','-');
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+  a.download = `chat_${date}.txt`;
+  a.click();
+}
+
 function addMessage(role, text, hideInChat = false, thinking = false) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
@@ -721,7 +738,21 @@ function downloadResult(id) {
 
 function copyResult(id) {
   const el = document.getElementById('text-'+id);
-  if (el) navigator.clipboard.writeText(el.textContent).then(()=>alert('Скопировано!'));
+  if (!el) return;
+  const text = el.textContent;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => alert('Скопировано!'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Скопировано!');
+  }
 }
 
 // ===== INIT =====
