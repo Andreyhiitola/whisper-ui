@@ -1,0 +1,19 @@
+[Interface]
+Address = 10.8.1.X/32
+PrivateKey = <YOUR_PRIVATE_KEY>
+Jc = 4
+Jmin = 10
+Jmax = 50
+S1 = 128
+S2 = 62
+H1 = 854640900
+H2 = 1015516179
+H3 = 921150458
+H4 = 276559774
+
+[Peer]
+PublicKey = <SERVER_PUBLIC_KEY>
+PresharedKey = <PRESHARED_KEY>
+AllowedIPs = 0.0.0.0/0
+Endpoint = <SERVER_IP>:<PORT>
+PersistentKeepalive = 25
