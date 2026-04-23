@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Whisper + Groq — Анализ обслуживания</title>
+<title>Whisper — Анализ обслуживания</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 * { box-sizing: border-box; }
@@ -77,13 +77,18 @@ textarea { resize: vertical; }
 .settings-panel { display: none; }
 .settings-panel.open { display: block; }
 
+/* provider badge */
+.provider-badge { display: inline-block; border-radius: 3px; padding: 2px 8px; font-size: 11px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
+.badge-groq { background: #e8f5e9; color: #2e7d32; }
+.badge-deepseek { background: #e3f2fd; color: #1565c0; }
+
 .info { font-size: 12px; color: #888; margin-top: 4px; }
 .tag { display: inline-block; background: #e3f2fd; color: #1565c0; border-radius: 3px; padding: 2px 8px; font-size: 12px; margin: 2px; cursor: pointer; }
 .tag:hover { background: #bbdefb; }
 </style>
 </head>
 <body>
-<h1>Whisper + Groq — Анализ обслуживания персонала</h1>
+<h1>Whisper — Анализ обслуживания персонала</h1>
 
 <div class="tabs">
   <button class="tab active" onclick="showTab('tab-transcribe')">1. Транскрибация</button>
@@ -135,16 +140,42 @@ textarea { resize: vertical; }
 
   <!-- Settings -->
   <div class="card">
-    <span class="settings-toggle" onclick="toggleSettings()">⚙️ Настройки Groq API</span>
+    <span class="settings-toggle" onclick="toggleSettings()">⚙️ Настройки API
+      <span id="provider-badge" class="provider-badge badge-groq">Groq</span>
+    </span>
     <div class="settings-panel" id="settings-panel">
-      <label>API ключ Groq (<a href="https://console.groq.com" target="_blank">получить бесплатно</a>):</label>
-      <input type="password" id="groq-key" placeholder="gsk_..." oninput="saveKey()">
-      <label>Модель:</label>
-      <select id="groq-model" onchange="saveKey()">
-        <option value="llama-3.3-70b-versatile">llama-3.3-70b — лучший русский (медленнее)</option>
-        <option value="llama-3.1-8b-instant">llama-3.1-8b — быстрый</option>
-        <option value="llama-3.2-11b-vision-preview">llama-3.2-11b vision — для картинок</option>
+
+      <label>Провайдер анализа:</label>
+      <select id="llmProvider" onchange="onProviderChange(); saveKey()">
+        <option value="groq">Groq (быстро, бесплатно)</option>
+        <option value="deepseek">DeepSeek (мощнее, нужен ключ)</option>
       </select>
+
+      <!-- Groq settings -->
+      <div id="groq-settings">
+        <label>API ключ Groq (<a href="https://console.groq.com" target="_blank">получить бесплатно</a>):</label>
+        <input type="password" id="groq-key" placeholder="gsk_..." oninput="saveKey()">
+        <label>Модель Groq:</label>
+        <select id="groq-model" onchange="saveKey()">
+          <option value="llama-3.3-70b-versatile">llama-3.3-70b — лучший русский (медленнее)</option>
+          <option value="llama-3.1-8b-instant">llama-3.1-8b — быстрый</option>
+          <option value="llama-3.2-11b-vision-preview">llama-3.2-11b vision — для картинок</option>
+        </select>
+        <div class="info">При выборе Groq — картинки распознаются через Groq Vision API.</div>
+      </div>
+
+      <!-- DeepSeek settings -->
+      <div id="deepseek-settings" style="display:none">
+        <label>API ключ DeepSeek (<a href="https://platform.deepseek.com" target="_blank">получить</a>):</label>
+        <input type="password" id="deepseek-key" placeholder="sk-..." oninput="saveKey()">
+        <label>Модель DeepSeek:</label>
+        <select id="deepseek-model" onchange="saveKey()">
+          <option value="deepseek-chat">deepseek-chat — универсальный</option>
+          <option value="deepseek-reasoner">deepseek-reasoner — с рассуждением</option>
+        </select>
+        <div class="info">При выборе DeepSeek — картинки распознаются локально через Tesseract (без отправки на внешние серверы).</div>
+      </div>
+
       <label>Системный промпт (инструкция для ИИ):</label>
       <textarea id="system-prompt" rows="4"></textarea>
       <div class="info">Шаблоны:
@@ -262,20 +293,45 @@ function toggleSettings() {
   document.getElementById('settings-panel').classList.toggle('open');
 }
 
+function onProviderChange() {
+  const provider = document.getElementById('llmProvider').value;
+  const isGroq = provider === 'groq';
+  document.getElementById('groq-settings').style.display = isGroq ? 'block' : 'none';
+  document.getElementById('deepseek-settings').style.display = isGroq ? 'none' : 'block';
+  const badge = document.getElementById('provider-badge');
+  if (isGroq) {
+    badge.textContent = 'Groq';
+    badge.className = 'provider-badge badge-groq';
+  } else {
+    badge.textContent = 'DeepSeek';
+    badge.className = 'provider-badge badge-deepseek';
+  }
+}
+
 function saveKey() {
   localStorage.setItem('groq_key', document.getElementById('groq-key').value);
   localStorage.setItem('groq_model', document.getElementById('groq-model').value);
+  localStorage.setItem('deepseek_key', document.getElementById('deepseek-key').value);
+  localStorage.setItem('deepseek_model', document.getElementById('deepseek-model').value);
+  localStorage.setItem('llm_provider', document.getElementById('llmProvider').value);
   localStorage.setItem('groq_prompt', document.getElementById('system-prompt').value);
 }
 
 function loadSettings() {
   const k = localStorage.getItem('groq_key');
   const m = localStorage.getItem('groq_model');
+  const dk = localStorage.getItem('deepseek_key');
+  const dm = localStorage.getItem('deepseek_model');
+  const prov = localStorage.getItem('llm_provider');
   const p = localStorage.getItem('groq_prompt');
   if (k) document.getElementById('groq-key').value = k;
   if (m) document.getElementById('groq-model').value = m;
+  if (dk) document.getElementById('deepseek-key').value = dk;
+  if (dm) document.getElementById('deepseek-model').value = dm;
+  if (prov) document.getElementById('llmProvider').value = prov;
   if (p) document.getElementById('system-prompt').value = p;
-  else document.getElementById('system-prompt').value = PROMPTS.quality;
+  else document.getElementById('system-prompt').value = PROMPTS.free;
+  onProviderChange();
 }
 
 // ===== SCENARIO FILE LOADING =====
@@ -298,13 +354,30 @@ async function loadScenarioFile() {
     status.textContent = 'PDF загружен (' + pdf.numPages + ' стр.)';
 
   } else if (file.type.startsWith('image/')) {
-    const key = document.getElementById('groq-key').value;
-    if (!key) { status.textContent = 'Введите API ключ Groq для чтения картинок'; return; }
+    const provider = document.getElementById('llmProvider').value;
     const b64 = await fileToBase64(file);
-    status.textContent = 'Читаю текст с картинки...';
-    const text = await groqVision(key, b64, file.type, 'Прочитай весь текст с этого изображения. Верни только текст, без комментариев.');
-    document.getElementById('scenario').value = text;
-    status.textContent = 'Текст извлечён с картинки';
+
+    if (provider === 'deepseek') {
+      status.textContent = 'Распознаю локально через Tesseract...';
+      try {
+        const text = await tesseractOCR(b64);
+        document.getElementById('scenario').value = text;
+        status.textContent = 'Текст распознан локально (Tesseract)';
+      } catch(e) {
+        status.textContent = 'Ошибка OCR: ' + e.message;
+      }
+    } else {
+      const key = document.getElementById('groq-key').value;
+      if (!key) { status.textContent = 'Введите API ключ Groq для чтения картинок'; return; }
+      status.textContent = 'Читаю текст через Groq Vision...';
+      try {
+        const text = await groqVision(key, b64, file.type, 'Прочитай весь текст с этого изображения. Верни только текст, без комментариев.');
+        document.getElementById('scenario').value = text;
+        status.textContent = 'Текст извлечён через Groq Vision';
+      } catch(e) {
+        status.textContent = 'Ошибка Groq Vision: ' + e.message;
+      }
+    }
 
   } else {
     document.getElementById('scenario').value = await file.text();
@@ -319,6 +392,19 @@ function fileToBase64(file) {
     r.onerror = rej;
     r.readAsDataURL(file);
   });
+}
+
+// ===== OCR (Tesseract via server) =====
+async function tesseractOCR(b64) {
+  const res = await fetch('/ocr', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: b64 })
+  });
+  if (!res.ok) throw new Error('Сервер OCR недоступен (' + res.status + ')');
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.text;
 }
 
 // ===== GROQ API =====
@@ -338,7 +424,7 @@ async function groqChat(key, model, systemPrompt, messages) {
   });
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.error?.message || 'Ошибка API');
+    throw new Error(err.error?.message || 'Ошибка Groq API');
   }
   const data = await res.json();
   return data.choices[0].message.content;
@@ -358,8 +444,51 @@ async function groqVision(key, b64, mimeType, prompt) {
     headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Ошибка Groq Vision');
+  }
   const data = await res.json();
   return data.choices[0]?.message?.content || '';
+}
+
+// ===== DEEPSEEK API =====
+async function deepseekChat(key, model, systemPrompt, messages) {
+  const body = {
+    model,
+    messages: [{ role: 'system', content: systemPrompt }, ...messages],
+    temperature: 0.3,
+    max_tokens: 2048
+  };
+  const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Ошибка DeepSeek API');
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+// ===== UNIFIED AI CALL =====
+async function getAIResponse(messages) {
+  const provider = document.getElementById('llmProvider').value;
+  const systemPrompt = document.getElementById('system-prompt').value;
+
+  if (provider === 'deepseek') {
+    const key = document.getElementById('deepseek-key').value;
+    if (!key) throw new Error('Введите API ключ DeepSeek в настройках');
+    const model = document.getElementById('deepseek-model').value;
+    return await deepseekChat(key, model, systemPrompt, messages);
+  } else {
+    const key = document.getElementById('groq-key').value;
+    if (!key) throw new Error('Введите API ключ Groq в настройках');
+    const model = document.getElementById('groq-model').value;
+    return await groqChat(key, model, systemPrompt, messages);
+  }
 }
 
 function loadFromTab1() {
@@ -374,16 +503,10 @@ function loadFromTab1() {
 }
 
 async function analyze() {
-  const key = document.getElementById('groq-key').value;
-  if (!key) { alert('Введите API ключ Groq в настройках'); toggleSettings(); return; }
-
   const scenario = document.getElementById('scenario').value.trim();
   const transcription = document.getElementById('transcription').value.trim();
   if (!scenario) { alert('Введите сценарий проверки'); return; }
   if (!transcription) { alert('Введите транскрипцию'); return; }
-
-  const model = document.getElementById('groq-model').value;
-  const systemPrompt = document.getElementById('system-prompt').value;
 
   const userMsg = `СЦЕНАРИЙ ПРОВЕРКИ:\n${scenario}\n\nТРАНСКРИПЦИЯ РАЗГОВОРА:\n${transcription}\n\nПроведи анализ.`;
 
@@ -394,13 +517,14 @@ async function analyze() {
   const thinkingEl = addMessage('assistant', 'Анализирую...', false, true);
 
   try {
-    const reply = await groqChat(key, model, systemPrompt, chatHistory);
+    const reply = await getAIResponse(chatHistory);
     thinkingEl.remove();
     addMessage('assistant', reply);
     chatHistory.push({ role: 'assistant', content: reply });
   } catch(e) {
     thinkingEl.textContent = 'Ошибка: ' + e.message;
     thinkingEl.classList.remove('thinking');
+    if (e.message.includes('ключ')) toggleSettings();
   }
 }
 
@@ -409,25 +533,21 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  const key = document.getElementById('groq-key').value;
-  if (!key) { alert('Введите API ключ Groq в настройках'); return; }
-
   input.value = '';
   chatHistory.push({ role: 'user', content: text });
   addMessage('user', text);
 
-  const model = document.getElementById('groq-model').value;
-  const systemPrompt = document.getElementById('system-prompt').value;
   const thinkingEl = addMessage('assistant', 'Думаю...', false, true);
 
   try {
-    const reply = await groqChat(key, model, systemPrompt, chatHistory);
+    const reply = await getAIResponse(chatHistory);
     thinkingEl.remove();
     addMessage('assistant', reply);
     chatHistory.push({ role: 'assistant', content: reply });
   } catch(e) {
     thinkingEl.textContent = 'Ошибка: ' + e.message;
     thinkingEl.classList.remove('thinking');
+    if (e.message.includes('ключ')) toggleSettings();
   }
 }
 
@@ -450,7 +570,7 @@ function clearChat() {
   document.getElementById('messages').innerHTML = '<div class="msg assistant">Чат очищен. Загрузите сценарий и транскрипцию.</div>';
 }
 
-// ===== TAB 1: TRANSCRIPTION (existing logic) =====
+// ===== TAB 1: TRANSCRIPTION =====
 let files = [];
 let outputDirHandle = null;
 

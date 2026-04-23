@@ -22,3 +22,10 @@ services:
     depends_on:
       - whisper
     restart: unless-stopped
+
+  ocr:
+    build: ./ocr
+    container_name: whisper-ocr
+    restart: unless-stopped
+    expose:
+      - "5000"
