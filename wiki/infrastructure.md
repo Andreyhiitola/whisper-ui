@@ -14,6 +14,8 @@
 | whisper | onerahmet/openai-whisper-asr-webservice | 9000 |
 | whisper-ui | nginx:alpine | 8090 |
 
+Whisper и Nginx — стандартные образы, сборка не нужна.
+
 ## Пути
 
 ```
@@ -26,17 +28,27 @@
 
 ## Nginx
 
-Nginx проксирует `/asr` на Whisper — нет CORS проблем, всё на одном порту 8090.
+Nginx раздаёт статику и проксирует `/asr` на Whisper — нет CORS проблем, всё через один порт 8090.
 
 ```
-браузер → nginx:8090 → whisper:9000
+браузер → nginx:8090 → /           → index.html
+                     → /asr        → whisper:9000
 ```
+
+Groq и DeepSeek вызываются напрямую из браузера (fetch к внешним API). На сервере не проксируются.
 
 ## Деплой
 
 ```bash
 cd ~/Desktop/whisper-ui
-./deploy.sh "описание"
+./deploy.sh "описание изменений"
 ```
 
-Делает: git commit → git push → scp файлов → docker restart whisper-ui
+Делает:
+1. `git commit` + `git push` (если есть изменения)
+2. `scp` — копирует `index.html`, `default.conf`, `whisper.yml` на сервер
+3. `docker restart whisper-ui` — перезапускает nginx
+
+## Репозиторий
+
+[github.com/Andreyhiitola/whisper-ui](https://github.com/Andreyhiitola/whisper-ui)
