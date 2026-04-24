@@ -11,6 +11,18 @@ services:
       - /srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_:/root/.cache/whisper
     restart: unless-stopped
 
+  whisper-fast:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisper-fast
+    ports:
+      - "9001:9000"
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=openai_whisper
+    volumes:
+      - /srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_:/root/.cache/whisper
+    restart: unless-stopped
+
   whisper-ui:
     image: nginx:alpine
     container_name: whisper-ui

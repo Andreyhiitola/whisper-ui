@@ -120,6 +120,13 @@ textarea { resize: vertical; }
           <option value="vtt">VTT (с таймкодами)</option>
         </select>
       </div>
+      <div>
+        <label>Модель Whisper:</label>
+        <select id="whisper-model" onchange="saveWhisperSettings()">
+          <option value="quality">Качество (small)</option>
+          <option value="fast">Быстро (base, ~6x быстрее)</option>
+        </select>
+      </div>
     </div>
 
     <div id="fileList" style="margin-top:12px"></div>
@@ -333,6 +340,8 @@ function loadSettings() {
   if (p) document.getElementById('system-prompt').value = p;
   else document.getElementById('system-prompt').value = PROMPTS.free;
   onProviderChange();
+  const wm = localStorage.getItem('whisper_model');
+  if (wm) document.getElementById('whisper-model').value = wm;
 }
 
 // ===== SCENARIO FILE LOADING =====
@@ -561,6 +570,10 @@ function clearChat() {
   document.getElementById('messages').innerHTML = '<div class="msg assistant">Чат очищен. Загрузите сценарий и транскрипцию.</div>';
 }
 
+function saveWhisperSettings() {
+  localStorage.setItem('whisper_model', document.getElementById('whisper-model').value);
+}
+
 // ===== TAB 1: TRANSCRIPTION =====
 let files = [];
 let outputDirHandle = null;
@@ -649,7 +662,8 @@ async function processFile(item) {
 
   const form = new FormData();
   form.append('audio_file', item.file);
-  let url = '/asr?output=' + output;
+  const asrPath = document.getElementById('whisper-model').value === 'fast' ? '/asr-fast' : '/asr';
+  let url = asrPath + '?output=' + output;
   if (lang) url += '&language=' + lang;
 
   try {
