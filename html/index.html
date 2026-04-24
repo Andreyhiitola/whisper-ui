@@ -695,7 +695,8 @@ async function processFile(item) {
       };
       xhr.upload.onload = () => {
         document.getElementById('ubar-'+item.id).className = 'progress-fill fill-orange';
-        const est = item.duration > 0 ? item.duration * 0.4 : null;
+        const isFast = document.getElementById('whisper-model').value === 'fast';
+        const est = item.duration > 0 ? item.duration * (isFast ? 0.15 : 0.4) : null;
         iv = setInterval(() => {
           elapsed++;
           const etaEl = document.getElementById('eta-'+item.id);
