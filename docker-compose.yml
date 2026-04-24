@@ -6,7 +6,7 @@ services:
       - "9000:9000"
     environment:
       - ASR_MODEL=small
-      - ASR_ENGINE=faster_whisper
+      - ASR_ENGINE=openai_whisper
     volumes:
       - /srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_:/root/.cache/whisper
     restart: unless-stopped
@@ -18,7 +18,7 @@ services:
       - "9001:9000"
     environment:
       - ASR_MODEL=base
-      - ASR_ENGINE=faster_whisper
+      - ASR_ENGINE=openai_whisper
     volumes:
       - /srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_:/root/.cache/whisper
     restart: unless-stopped
