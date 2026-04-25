@@ -1,51 +1,51 @@
 # Whisper UI — Статус проекта
 
 ## Сервер
-- OMV VM: 192.168.1.73 (Proxmox VM 630, node seaport)
-- Whisper ASR: http://192.168.1.73:9000
-- Whisper UI: http://192.168.1.73:8090
+
+| | |
+|--|--|
+| Сервер | OpenMediaVault, Proxmox VM 630, node seaport |
+| IP | 192.168.1.73 |
+| UI | https://192.168.1.73:8443 |
+| Whisper quality | http://192.168.1.73:9000 (модель small) |
+| Whisper fast | http://192.168.1.73:9001 (модель base) |
 
 ## Пути на сервере
-- Compose файл: `/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/compose/whisper/whisper.yml`
-- HTML файлы: `/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/html/`
-- Nginx конфиг: `/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/conf/default.conf`
-- Кэш модели: `/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_/`
 
-## Модель
-- Whisper small (~460MB), скачана и закэширована
+```
+/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/
+  whisper-ui/          ← git репозиторий
+  whisper_ui/
+    html/              ← index.html, config.json
+    conf/              ← default.conf
+    ssl/               ← nginx.crt, nginx.key
+  wisper_/             ← кэш моделей Whisper
+  compose/whisper/
+    whisper-ui-compose.yml
+```
 
-## Сделано
-- [x] Расширен диск VM с 16G до 36G
-- [x] Запущен Whisper ASR контейнер (порт 9000)
-- [x] Запущен Nginx контейнер для UI (порт 8090)
-- [x] Nginx проксирует /asr на Whisper (без CORS проблем)
-- [x] Мультифайловая загрузка с прогрессом и таймером
-- [x] Автосохранение результатов в папку (File System Access API)
-- [x] Вкладка анализа: сценарий + транскрипция → Groq LLM → отчёт
-- [x] Чат для уточнений после анализа
-- [x] 4 шаблона анализа (свободный, таблица, тональность, критические нарушения)
-- [x] Загрузка сценария: текст / PDF / картинка (Groq Vision OCR)
-- [x] Выбор провайдера анализа: Groq или DeepSeek
-- [x] Скрипт деплоя deploy.sh
-- [x] Кнопка "Сохранить чат" — скачивает переписку в .txt
-- [x] Исправлено копирование результатов на HTTP (fallback без clipboard API)
-- [x] Серверный скрипт update.sh (git pull + cp + restart)
-- [x] AmneziaWG VPN на OMV (порт 1080, amneziavpn/amnezia-wg)
+## Реализовано
 
-## Возможности UI
-- Загрузка нескольких файлов, обработка по очереди
-- Выбор языка (ru / en / uk / авто)
-- Форматы: txt, SRT, VTT (с таймкодами)
-- Прогресс загрузки и транскрибации с таймером
-- Скачать / Копировать результат для каждого файла
-- Анализ разговора через Groq (бесплатно) или DeepSeek (~$0.0003/запрос)
-- OCR картинок через Groq Vision (всегда, для обоих провайдеров)
-- Сохранить чат с ИИ в файл
+- [x] HTTPS (самоподписанный сертификат, порт 8443)
+- [x] HTTP → HTTPS редирект (порт 80)
+- [x] Два Whisper контейнера: quality (small) и fast (base)
+- [x] Мультифайловая транскрибация с прогрессом и ETA
+- [x] Автосохранение в папку проекта (File System Access API)
+- [x] Подпапка на каждый аудиофайл + автосоздание prompt.txt
+- [x] Анализ через OpenRouter (Qwen 2.5, Llama 3.3 и др.)
+- [x] Анализ через DeepSeek (V3, R1)
+- [x] 4 шаблона анализа: отчёт / таблица / тональность / критика
+- [x] Загрузка сценария: PDF (PDF.js), фото (Tesseract OCR), TXT
+- [x] Чат с историей контекста
+- [x] Сохранение чата в папку проекта или выбранную папку
+- [x] Автосохранение анализа в папку проекта
+- [x] config.json — дефолтные настройки с сервера
+- [x] AmneziaWG VPN
+- [x] deploy.sh — локальный скрипт деплоя (gitignored)
 
-## Правило для новых сессий
-По окончании каждой рабочей сессии — обновить этот файл и все релевантные wiki-файлы:
-- `wiki/roadmap.md` — отметить выполненное, добавить новые задачи
-- `wiki/workflow.md` — если изменился процесс работы
-- `wiki/infrastructure.md` — если изменилась инфраструктура
-- `wiki/groq.md` / `wiki/deepseek.md` — если изменилась интеграция с API
-- `STATUS.md` — текущее состояние проекта
+## Не в git
+
+- `deploy.sh` — у каждой машины свой (шаблон в SETUP.md)
+- SSL ключи — только на сервере
+- Кэш моделей Whisper
+- Папки с проектами (транскрипции, анализы)

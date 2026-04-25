@@ -1,17 +1,18 @@
 #!/bin/bash
 set -e
 
-REPO="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper-ui"
-HTML_SRC="$REPO/html/index.html"
-HTML_DST="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/html/index.html"
-NGINX_SRC="$REPO/nginx/default.conf"
-NGINX_DST="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/conf/default.conf"
+DISK="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e"
+REPO="$DISK/whisper-ui"
 
 cd "$REPO"
-git pull --rebase
+git fetch origin main
+git checkout origin/main -- html/index.html html/config.json nginx/default.conf
 
-cp "$HTML_SRC" "$HTML_DST"
-cp "$NGINX_SRC" "$NGINX_DST"
+cp html/index.html    "$DISK/whisper_ui/html/"
+cp html/config.json   "$DISK/whisper_ui/html/"
+cp nginx/default.conf "$DISK/whisper_ui/conf/default.conf"
 
-docker restart whisper-ui
-echo "Готово!"
+cd "$DISK/compose/whisper"
+docker compose -f whisper-ui-compose.yml restart whisper-ui
+
+echo "✅ Готово! https://192.168.1.73:8443"
