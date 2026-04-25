@@ -15,6 +15,7 @@ fi
 ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 "$SERVER" bash << 'EOF'
   REMOTE_DIR="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e"
   cd "$REMOTE_DIR/whisper-ui"
+  git stash
   git pull origin main
   cp html/index.html "$REMOTE_DIR/whisper_ui/html/"
   cp html/config.json "$REMOTE_DIR/whisper_ui/html/"
