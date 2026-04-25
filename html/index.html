@@ -95,11 +95,11 @@ textarea { resize: vertical; }
   <div class="card">
     <label>Аудиофайлы (можно несколько):</label>
     <input type="file" id="fileInput" accept="audio/*,video/*" multiple onchange="addFiles()">
-    
+
     <div id="projectFolderNotice" class="project-notice">
-      📁 Папка проекта: <strong id="projectFolderPath">не выбрана</strong>
+      Папка проекта: <strong id="projectFolderPath">не выбрана</strong>
       <br>Транскрибация и prompt.txt сохраняются автоматически.
-      <br><a href="#" onclick="pickRootFolder(); return false;" style="color:#1976D2; font-size:12px;">⚡ Выбрать папку для проектов</a>
+      <br><a href="#" onclick="pickRootFolder(); return false;" style="color:#1976D2; font-size:12px;">Выбрать папку для проектов</a>
     </div>
 
     <div class="row" style="margin-top:12px">
@@ -112,8 +112,8 @@ textarea { resize: vertical; }
 
     <div class="btn-row">
       <button class="btn btn-blue" id="startBtn" onclick="startAll()">Транскрибировать все</button>
-      <button class="btn btn-green" id="folderBtn" onclick="pickRootFolder()">📁 Корневая папка проектов</button>
-      <button class="btn btn-purple" onclick="editProjectPrompt()">📝 Редактировать prompt.txt</button>
+      <button class="btn btn-green" id="folderBtn" onclick="pickRootFolder()">Корневая папка проектов</button>
+      <button class="btn btn-purple" onclick="editProjectPrompt()">Редактировать prompt.txt</button>
       <button class="btn btn-orange" onclick="clearList()">Очистить</button>
     </div>
   </div>
@@ -123,7 +123,7 @@ textarea { resize: vertical; }
 <!-- ===== TAB 2: ANALYZE ===== -->
 <div id="tab-analyze" class="page">
   <div class="card">
-    <span class="settings-toggle" onclick="toggleSettings()">⚙️ Настройки API <span id="provider-badge" class="provider-badge badge-qwen">Qwen</span></span>
+    <span class="settings-toggle" onclick="toggleSettings()">Настройки API <span id="provider-badge" class="provider-badge badge-qwen">Qwen</span></span>
     <div class="settings-panel" id="settings-panel">
       <label>Провайдер анализа:</label>
       <select id="llmProvider" onchange="onProviderChange(); saveAllSettings()">
@@ -139,10 +139,11 @@ textarea { resize: vertical; }
           <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B — максимум качества</option>
           <option value="qwen/qwen-2.5-7b-instruct">Qwen 2.5 7B — быстрый</option>
           <option value="qwen/qwq-32b-preview">Qwen QwQ 32B — с рассуждением</option>
-          <option value="__custom__">🔧 Другая модель (ввести)...</option>
+          <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B — бесплатно</option>
+          <option value="__custom__">Другая модель (ввести)...</option>
         </select>
         <input type="text" id="qwen-model-custom" placeholder="ID модели OpenRouter" style="display:none; margin-top:4px" oninput="saveAllSettings()">
-        <div class="info">Ключ бесплатный. Бесплатные модели: meta-llama/llama-3.3-70b-instruct:free</div>
+        <div class="info">Ключ бесплатный. Llama 3.3 70B работает без оплаты.</div>
       </div>
       <div id="deepseek-settings" style="display:none">
         <label>API ключ DeepSeek (<a href="https://platform.deepseek.com" target="_blank">получить</a>):</label>
@@ -151,8 +152,7 @@ textarea { resize: vertical; }
         <select id="deepseek-model-select" onchange="onModelSelectChange('deepseek')">
           <option value="deepseek-chat">DeepSeek V3</option>
           <option value="deepseek-reasoner">DeepSeek R1</option>
-          <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (бесплатно)</option>
-          <option value="__custom__">🔧 Другая модель (ввести)...</option>
+          <option value="__custom__">Другая модель (ввести)...</option>
         </select>
         <input type="text" id="deepseek-model-custom" placeholder="Название модели" style="display:none; margin-top:4px" oninput="saveAllSettings()">
         <div class="info">50 запросов/день бесплатно при регистрации.</div>
@@ -160,12 +160,12 @@ textarea { resize: vertical; }
       <label>Системный промпт:</label>
       <textarea id="system-prompt" rows="4" oninput="saveAllSettings()"></textarea>
       <div class="info">
-        <button class="btn btn-purple" onclick="loadPromptFromProject()" style="font-size:12px;padding:4px 10px">📂 Из prompt.txt проекта</button>
+        <button class="btn btn-purple" onclick="loadPromptFromProject()" style="font-size:12px;padding:4px 10px">Из prompt.txt проекта</button>
         Шаблоны:
-        <span class="tag" onclick="setPrompt('free')">📝 Отчёт</span>
-        <span class="tag" onclick="setPrompt('table')">📊 Таблица</span>
-        <span class="tag" onclick="setPrompt('tone')">🎭 Тональность</span>
-        <span class="tag" onclick="setPrompt('critical')">🚨 Критика</span>
+        <span class="tag" onclick="setPrompt('free')">Отчёт</span>
+        <span class="tag" onclick="setPrompt('table')">Таблица</span>
+        <span class="tag" onclick="setPrompt('tone')">Тональность</span>
+        <span class="tag" onclick="setPrompt('critical')">Критика</span>
       </div>
     </div>
   </div>
@@ -181,7 +181,7 @@ textarea { resize: vertical; }
   <div class="card">
     <label>Транскрипция:</label>
     <div class="btn-row" style="margin-top:0;margin-bottom:8px">
-      <button class="btn btn-blue" onclick="loadFromTab1()">← Взять из вкладки 1</button>
+      <button class="btn btn-blue" onclick="loadFromTab1()">Взять из вкладки 1</button>
     </div>
     <textarea id="transcription" rows="6" placeholder="Вставьте транскрипцию или возьмите из вкладки 1..."></textarea>
   </div>
@@ -206,8 +206,10 @@ textarea { resize: vertical; }
 if (typeof pdfjsLib !== 'undefined') pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 let rootFolderHandle = null;
-let currentProjectPath = '';
+let currentBaseName = '';
 let chatHistory = [];
+let fileIdCounter = 0;
+let files = [];
 
 function showTab(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -228,24 +230,26 @@ function setPrompt(type) { document.getElementById('system-prompt').value = PROM
 function toggleSettings() { document.getElementById('settings-panel').classList.toggle('open'); }
 
 function onModelSelectChange(provider) {
-  const sel = document.getElementById(provider+'-model-select');
-  const cust = document.getElementById(provider+'-model-custom');
-  sel.value === '__custom__' ? (cust.style.display='block', cust.focus()) : (cust.style.display='none');
+  const sel = document.getElementById(provider + '-model-select');
+  const cust = document.getElementById(provider + '-model-custom');
+  if (sel.value === '__custom__') { cust.style.display = 'block'; cust.focus(); }
+  else { cust.style.display = 'none'; }
   saveAllSettings();
 }
 
 function getSelectedModel(provider) {
-  const sel = document.getElementById(provider+'-model-select');
-  const cust = document.getElementById(provider+'-model-custom');
-  return sel.value === '__custom__' ? cust.value.trim() || '__custom__' : sel.value;
+  const sel = document.getElementById(provider + '-model-select');
+  const cust = document.getElementById(provider + '-model-custom');
+  return sel.value === '__custom__' ? (cust.value.trim() || '__custom__') : sel.value;
 }
 
 function setModelFromSaved(provider, saved) {
-  const sel = document.getElementById(provider+'-model-select');
-  const cust = document.getElementById(provider+'-model-custom');
-  let found = false;
-  for (const o of sel.options) { if (o.value === saved && o.value !== '__custom__') { sel.value = saved; cust.style.display = 'none'; found = true; break; } }
-  if (!found && saved && saved !== '__custom__') { sel.value = '__custom__'; cust.value = saved; cust.style.display = 'block'; }
+  const sel = document.getElementById(provider + '-model-select');
+  const cust = document.getElementById(provider + '-model-custom');
+  for (const o of sel.options) {
+    if (o.value === saved && o.value !== '__custom__') { sel.value = saved; cust.style.display = 'none'; return; }
+  }
+  if (saved && saved !== '__custom__') { sel.value = '__custom__'; cust.value = saved; cust.style.display = 'block'; }
 }
 
 function onProviderChange() {
@@ -312,52 +316,66 @@ async function pickRootFolder() {
   try {
     rootFolderHandle = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents' });
     localStorage.setItem('root_folder_name', rootFolderHandle.name);
-    updateProjectFolderUI(rootFolderHandle.name);
+    updateProjectFolderUI();
   } catch(e) {}
 }
 
-function updateProjectFolderUI(name) {
+function updateProjectFolderUI(fallbackName) {
   const el = document.getElementById('projectFolderPath');
   const notice = document.getElementById('projectFolderNotice');
-  if (name) { el.textContent = name + '/[имя_аудио]/'; notice.classList.add('show'); }
-  else { el.textContent = 'не выбрана'; notice.classList.add('show'); }
+  const name = (rootFolderHandle && rootFolderHandle.name) || fallbackName;
+  if (name) {
+    el.textContent = name + '/' + (currentBaseName || '[имя_аудио]') + '/';
+    notice.classList.add('show');
+  } else {
+    el.textContent = 'не выбрана';
+    notice.classList.add('show');
+  }
+}
+
+// ===== PROJECT FILE I/O =====
+// File System Access API не принимает слэши в getFileHandle —
+// нужно явно создавать подпапку через getDirectoryHandle.
+async function getProjectDir(baseName) {
+  return await rootFolderHandle.getDirectoryHandle(baseName, { create: true });
+}
+
+async function readProjectFile(fn) {
+  const dir = await getProjectDir(currentBaseName);
+  const fh = await dir.getFileHandle(fn);
+  return await (await fh.getFile()).text();
+}
+
+async function writeProjectFile(fn, content) {
+  const dir = await getProjectDir(currentBaseName);
+  const fh = await dir.getFileHandle(fn, { create: true });
+  const w = await fh.createWritable();
+  await w.write(content);
+  await w.close();
 }
 
 // ===== PROMPT FILE =====
 async function editProjectPrompt() {
-  if (!rootFolderHandle || !currentProjectPath) {
+  if (!rootFolderHandle || !currentBaseName) {
     alert('Сначала выберите папку и добавьте аудиофайл.');
     return;
   }
   let cur = '';
-  try { cur = await readFileFromProject('prompt.txt'); } catch(e) {}
+  try { cur = await readProjectFile('prompt.txt'); } catch(e) {}
   const np = prompt('prompt.txt:', cur || PROMPTS.free);
   if (np !== null) {
-    await writeFileToProject('prompt.txt', np);
+    await writeProjectFile('prompt.txt', np);
     document.getElementById('system-prompt').value = np;
     saveAllSettings();
   }
 }
 
 async function loadPromptFromProject() {
-  if (!rootFolderHandle || !currentProjectPath) return;
+  if (!rootFolderHandle || !currentBaseName) return;
   try {
-    const t = await readFileFromProject('prompt.txt');
+    const t = await readProjectFile('prompt.txt');
     if (t.trim()) { document.getElementById('system-prompt').value = t; saveAllSettings(); }
   } catch(e) {}
-}
-
-async function readFileFromProject(fn) {
-  const fh = await rootFolderHandle.getFileHandle(fn);
-  const f = await fh.getFile();
-  return await f.text();
-}
-
-async function writeFileToProject(fn, content) {
-  const fh = await rootFolderHandle.getFileHandle(fn, { create: true });
-  const w = await fh.createWritable();
-  await w.write(content);
-  await w.close();
 }
 
 // ===== SCENARIO =====
@@ -370,24 +388,40 @@ async function loadScenarioFile() {
     const ab = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
     let text = '';
-    for (let i = 1; i <= pdf.numPages; i++) { const page = await pdf.getPage(i); const c = await page.getTextContent(); text += c.items.map(s => s.str).join(' ') + '\n'; }
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const c = await page.getTextContent();
+      text += c.items.map(s => s.str).join(' ') + '\n';
+    }
     document.getElementById('scenario').value = text.trim();
     st.textContent = 'PDF (' + pdf.numPages + ' стр.)';
   } else if (file.type.startsWith('image/')) {
     st.textContent = 'OCR...';
     try {
-      const r = await Tesseract.recognize(file, 'rus+eng', { logger: m => { if (m.status === 'recognizing text') st.textContent = 'OCR: ' + Math.round(m.progress*100) + '%'; } });
+      const r = await Tesseract.recognize(file, 'rus+eng', {
+        logger: m => { if (m.status === 'recognizing text') st.textContent = 'OCR: ' + Math.round(m.progress * 100) + '%'; }
+      });
       document.getElementById('scenario').value = r.data.text.trim();
       st.textContent = 'OK (Tesseract)';
     } catch(e) { st.textContent = 'Ошибка OCR: ' + e.message; }
-  } else { document.getElementById('scenario').value = await file.text(); st.textContent = 'Загружен'; }
+  } else {
+    document.getElementById('scenario').value = await file.text();
+    st.textContent = 'Загружен';
+  }
 }
 
 // ===== API =====
 async function openrouterChat(key, model, sp, msgs) {
-  const body = { model, messages: [...(sp?[{role:'system',content:sp}]:[]), ...msgs], temperature: 0.3, max_tokens: 2048 };
+  const body = {
+    model,
+    messages: [...(sp ? [{ role: 'system', content: sp }] : []), ...msgs],
+    temperature: 0.3,
+    max_tokens: 2048
+  };
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method:'POST', headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':location.href,'X-Title':'Whisper'}, body:JSON.stringify(body)
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'HTTP-Referer': location.href, 'X-Title': 'Whisper' },
+    body: JSON.stringify(body)
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'OpenRouter error'); }
   const d = await res.json();
@@ -395,9 +429,16 @@ async function openrouterChat(key, model, sp, msgs) {
 }
 
 async function deepseekChat(key, model, sp, msgs) {
-  const body = { model, messages: [{role:'system',content:sp}, ...msgs], temperature: 0.3, max_tokens: 2048 };
+  const body = {
+    model,
+    messages: [{ role: 'system', content: sp }, ...msgs],
+    temperature: 0.3,
+    max_tokens: 2048
+  };
   const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
-    method:'POST', headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'}, body:JSON.stringify(body)
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'DeepSeek error'); }
   const d = await res.json();
@@ -422,7 +463,8 @@ function loadFromTab1() {
   const results = document.querySelectorAll('.result-area');
   let combined = '';
   results.forEach(r => { if (r.textContent.trim()) combined += r.textContent.trim() + '\n\n'; });
-  combined ? document.getElementById('transcription').value = combined.trim() : alert('Нет транскрибированных файлов');
+  if (combined) document.getElementById('transcription').value = combined.trim();
+  else alert('Нет транскрибированных файлов');
 }
 
 async function analyze() {
@@ -433,14 +475,18 @@ async function analyze() {
   chatHistory = [];
   const um = `СЦЕНАРИЙ:\n${sc}\n\nТРАНСКРИПЦИЯ:\n${tr}\n\nПроведи анализ.`;
   addMessage('user', um, true);
-  chatHistory.push({role:'user',content:um});
-  const th = addMessage('assistant','Анализирую...',false,true);
+  chatHistory.push({ role: 'user', content: um });
+  const th = addMessage('assistant', 'Анализирую...', false, true);
   try {
     const reply = await getAIResponse(chatHistory);
-    th.remove(); addMessage('assistant',reply);
-    chatHistory.push({role:'assistant',content:reply});
-    if (rootFolderHandle && currentProjectPath) {
-      try { await writeFileToProject('analysis_' + new Date().toISOString().replace(/[:.]/g,'-').slice(0,19) + '.txt', reply); } catch(e) {}
+    th.remove();
+    addMessage('assistant', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+    if (rootFolderHandle && currentBaseName) {
+      try {
+        const fname = 'analysis_' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + '.txt';
+        await writeProjectFile(fname, reply);
+      } catch(e) {}
     }
   } catch(e) { th.textContent = 'Ошибка: ' + e.message; th.classList.remove('thinking'); }
 }
@@ -450,30 +496,36 @@ async function sendMessage() {
   const text = inp.value.trim();
   if (!text) return;
   inp.value = '';
-  chatHistory.push({role:'user',content:text});
-  addMessage('user',text);
-  const th = addMessage('assistant','Думаю...',false,true);
+  chatHistory.push({ role: 'user', content: text });
+  addMessage('user', text);
+  const th = addMessage('assistant', 'Думаю...', false, true);
   try {
     const reply = await getAIResponse(chatHistory);
-    th.remove(); addMessage('assistant',reply);
-    chatHistory.push({role:'assistant',content:reply});
+    th.remove();
+    addMessage('assistant', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
   } catch(e) { th.textContent = 'Ошибка: ' + e.message; th.classList.remove('thinking'); }
 }
 
-function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
 
 function saveChat() {
   const msgs = document.querySelectorAll('#messages .msg');
   if (!msgs.length) return;
   let text = '';
-  msgs.forEach(m => { const role = m.classList.contains('user') ? 'Проверяющий' : 'Ассистент'; if (m.textContent.trim()) text += `[${role}]\n${m.textContent.trim()}\n\n`; });
+  msgs.forEach(m => {
+    const role = m.classList.contains('user') ? 'Проверяющий' : 'Ассистент';
+    if (m.textContent.trim()) text += `[${role}]\n${m.textContent.trim()}\n\n`;
+  });
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-  a.download = 'chat_' + new Date().toISOString().slice(0,16).replace('T','_').replace(':','-') + '.txt';
+  a.download = 'chat_' + new Date().toISOString().slice(0, 16).replace('T', '_').replace(':', '-') + '.txt';
   a.click();
 }
 
-function addMessage(role, text, hide=false, thinking=false) {
+function addMessage(role, text, hide = false, thinking = false) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg ' + role + (thinking ? ' thinking' : '');
@@ -483,31 +535,38 @@ function addMessage(role, text, hide=false, thinking=false) {
   return div;
 }
 
-function clearChat() { chatHistory = []; document.getElementById('messages').innerHTML = '<div class="msg assistant">Чат очищен.</div>'; }
-function saveWhisperSettings() { localStorage.setItem('whisper_model', document.getElementById('whisper-model').value); }
+function clearChat() {
+  chatHistory = [];
+  document.getElementById('messages').innerHTML = '<div class="msg assistant">Чат очищен.</div>';
+}
+
+function saveWhisperSettings() {
+  localStorage.setItem('whisper_model', document.getElementById('whisper-model').value);
+}
 
 // ===== TRANSCRIPTION =====
-let files = [];
-function fmtSize(b) { return (b/1024/1024).toFixed(1) + ' МБ'; }
-function fmtTime(s) { s=Math.round(s); return s<60 ? s+' сек' : Math.floor(s/60)+' мин '+(s%60)+' сек'; }
+function fmtSize(b) { return (b / 1024 / 1024).toFixed(1) + ' МБ'; }
+function fmtTime(s) { s = Math.round(s); return s < 60 ? s + ' сек' : Math.floor(s / 60) + ' мин ' + (s % 60) + ' сек'; }
 
 function addFiles() {
   const input = document.getElementById('fileInput');
   if (!rootFolderHandle && window.showDirectoryPicker) {
     pickRootFolder().then(() => processNewFiles(input));
-  } else { processNewFiles(input); }
+  } else {
+    processNewFiles(input);
+  }
 }
 
 function processNewFiles(input) {
   for (const f of input.files) {
     if (files.find(x => x.file.name === f.name && x.file.size === f.size)) continue;
-    const id = Date.now() + Math.random();
+    const id = ++fileIdCounter;
     const bn = f.name.replace(/\.[^.]+$/, '');
-    files.push({ id, file: f, duration: 0, status: 'wait', baseName: bn, projectPath: bn + '/' });
-    renderFileItem(files[files.length-1]);
-    detectDuration(files[files.length-1]);
-    currentProjectPath = bn + '/';
-    updateProjectFolderUI(rootFolderHandle ? rootFolderHandle.name : null);
+    files.push({ id, file: f, duration: 0, status: 'wait', baseName: bn });
+    renderFileItem(files[files.length - 1]);
+    detectDuration(files[files.length - 1]);
+    currentBaseName = bn;
+    updateProjectFolderUI();
   }
   input.value = '';
 }
@@ -516,12 +575,15 @@ function detectDuration(item) {
   const r = new FileReader();
   r.onload = e => {
     try {
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
       ctx.decodeAudioData(e.target.result, buf => {
         item.duration = buf.duration;
-        const el = document.getElementById('meta-'+item.id);
-        if (el) { const m=Math.floor(item.duration/60),s=Math.floor(item.duration%60); el.textContent = fmtSize(item.file.size)+' | '+m+':'+String(s).padStart(2,'0'); }
-      },()=>{});
+        const el = document.getElementById('meta-' + item.id);
+        if (el) {
+          const m = Math.floor(item.duration / 60), s = Math.floor(item.duration % 60);
+          el.textContent = fmtSize(item.file.size) + ' | ' + m + ':' + String(s).padStart(2, '0');
+        }
+      }, () => {});
     } catch(e) {}
   };
   r.readAsArrayBuffer(item.file);
@@ -530,18 +592,25 @@ function detectDuration(item) {
 function renderFileItem(item) {
   const list = document.getElementById('fileList');
   const div = document.createElement('div');
-  div.className = 'file-item'; div.id = 'item-' + item.id;
+  div.className = 'file-item';
+  div.id = 'item-' + item.id;
   div.innerHTML = `<span class="name">${item.file.name}</span><span class="meta" id="meta-${item.id}">${fmtSize(item.file.size)}</span><span class="status status-wait" id="status-${item.id}">ожидание</span>`;
   list.appendChild(div);
 }
 
-function clearList() { files=[]; document.getElementById('fileList').innerHTML=''; document.getElementById('results').innerHTML=''; currentProjectPath = ''; updateProjectFolderUI(null); }
+function clearList() {
+  files = [];
+  fileIdCounter = 0;
+  currentBaseName = '';
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('results').innerHTML = '';
+  updateProjectFolderUI();
+}
 
 async function startAll() {
   if (!files.length) { alert('Добавьте файлы'); return; }
   if (!rootFolderHandle && window.showDirectoryPicker) {
-    const ok = confirm('📁 Папка не выбрана.\n\nВыбрать папку для автосохранения?');
-    if (ok) await pickRootFolder();
+    if (confirm('Папка не выбрана.\n\nВыбрать папку для автосохранения?')) await pickRootFolder();
   }
   document.getElementById('startBtn').disabled = true;
   for (const item of files) { if (item.status !== 'done') await processFile(item); }
@@ -552,73 +621,122 @@ async function processFile(item) {
   const lang = document.getElementById('lang').value;
   const output = document.getElementById('output').value;
   setStatus(item.id, 'running', 'обработка...');
-  if (rootFolderHandle) { currentProjectPath = item.baseName + '/'; updateProjectFolderUI(rootFolderHandle.name); }
+  if (rootFolderHandle) { currentBaseName = item.baseName; updateProjectFolderUI(); }
 
-  let block = document.getElementById('result-'+item.id);
+  let block = document.getElementById('result-' + item.id);
   if (!block) {
-    block = document.createElement('div'); block.className = 'card result-block'; block.id = 'result-'+item.id;
+    block = document.createElement('div');
+    block.className = 'card result-block';
+    block.id = 'result-' + item.id;
     block.innerHTML = `<div class="result-header"><span>${item.file.name}</span>
-      <button class="btn btn-green" onclick="downloadResult('${item.id}')">Скачать</button>
-      <button class="btn btn-blue" onclick="copyResult('${item.id}')">Копировать</button>
-      <button class="btn btn-orange" onclick="sendToAnalysis('${item.id}')">→ В анализ</button></div>
+      <button class="btn btn-green" onclick="downloadResult(${item.id})">Скачать</button>
+      <button class="btn btn-blue" onclick="copyResult(${item.id})">Копировать</button>
+      <button class="btn btn-orange" onclick="sendToAnalysis(${item.id})">→ В анализ</button></div>
       <div class="progress-wrap" id="prog-${item.id}"><div class="progress-bar"><div class="progress-fill fill-blue" id="ubar-${item.id}" style="width:0%"></div></div>
       <div class="eta-text" id="eta-${item.id}">Загрузка...</div></div>
       <div class="result-area" id="text-${item.id}"></div>`;
     document.getElementById('results').appendChild(block);
   }
 
-  const form = new FormData(); form.append('audio_file', item.file);
+  const form = new FormData();
+  form.append('audio_file', item.file);
   const asrPath = document.getElementById('whisper-model').value === 'fast' ? '/asr-fast' : '/asr';
   let url = asrPath + '?output=' + output;
   if (lang) url += '&language=' + lang;
 
   try {
     const text = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest(); xhr.open('POST', url);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
       let elapsed = 0, iv = null;
-      xhr.upload.onprogress = e => { if (e.lengthComputable) { const pct = Math.round(e.loaded/e.total*100); const ub = document.getElementById('ubar-'+item.id); const et = document.getElementById('eta-'+item.id); if (ub) ub.style.width = pct+'%'; if (et) et.textContent = 'Загрузка: '+pct+'%'; } };
+      xhr.upload.onprogress = e => {
+        if (e.lengthComputable) {
+          const pct = Math.round(e.loaded / e.total * 100);
+          const ub = document.getElementById('ubar-' + item.id);
+          const et = document.getElementById('eta-' + item.id);
+          if (ub) ub.style.width = pct + '%';
+          if (et) et.textContent = 'Загрузка: ' + pct + '%';
+        }
+      };
       xhr.upload.onload = () => {
-        const ub = document.getElementById('ubar-'+item.id); if (ub) ub.className = 'progress-fill fill-orange';
+        const ub = document.getElementById('ubar-' + item.id);
+        if (ub) ub.className = 'progress-fill fill-orange';
         const isFast = document.getElementById('whisper-model').value === 'fast';
         const est = item.duration > 0 ? item.duration * (isFast ? 0.35 : 0.75) : null;
-        iv = setInterval(() => { elapsed++;
-          const et = document.getElementById('eta-'+item.id); if (!et) { clearInterval(iv); return; }
-          if (est) { const left = Math.max(0, est-elapsed); et.textContent = 'Прошло: '+fmtTime(elapsed)+(left>0?'  |  ~'+fmtTime(left):'  |  Заканчиваем...'); }
-          else { et.textContent = 'Транскрибация... '+fmtTime(elapsed); }
+        iv = setInterval(() => {
+          elapsed++;
+          const et = document.getElementById('eta-' + item.id);
+          if (!et) { clearInterval(iv); return; }
+          if (est) {
+            const left = Math.max(0, est - elapsed);
+            et.textContent = 'Прошло: ' + fmtTime(elapsed) + (left > 0 ? '  |  ~' + fmtTime(left) : '  |  Заканчиваем...');
+          } else {
+            et.textContent = 'Транскрибация... ' + fmtTime(elapsed);
+          }
           if (xhr.readyState === 4) clearInterval(iv);
         }, 1000);
       };
-      xhr.onload = () => { if(iv)clearInterval(iv); xhr.status>=200&&xhr.status<300 ? resolve(xhr.responseText) : reject(new Error('Ошибка: '+xhr.status)); };
-      xhr.onerror = () => { if(iv)clearInterval(iv); reject(new Error('Нет соединения с Whisper')); };
+      xhr.onload = () => {
+        if (iv) clearInterval(iv);
+        xhr.status >= 200 && xhr.status < 300 ? resolve(xhr.responseText) : reject(new Error('Ошибка: ' + xhr.status));
+      };
+      xhr.onerror = () => { if (iv) clearInterval(iv); reject(new Error('Нет соединения с Whisper')); };
       xhr.send(form);
     });
 
-    const ub = document.getElementById('ubar-'+item.id); const et = document.getElementById('eta-'+item.id);
-    if (ub) ub.className = 'progress-fill fill-green'; if (et) et.textContent = 'Готово!';
-    const ta = document.getElementById('text-'+item.id); if (ta) ta.textContent = text;
-    item.result = text; item.outputFormat = output;
-    await autoSave(item); setStatus(item.id, 'done', 'готово');
-  } catch(e) { const et = document.getElementById('eta-'+item.id); if (et) et.textContent = 'Ошибка: ' + e.message; setStatus(item.id, 'err', 'ошибка'); }
+    const ub = document.getElementById('ubar-' + item.id);
+    const et = document.getElementById('eta-' + item.id);
+    if (ub) ub.className = 'progress-fill fill-green';
+    if (et) et.textContent = 'Готово!';
+    const ta = document.getElementById('text-' + item.id);
+    if (ta) ta.textContent = text;
+    item.result = text;
+    item.outputFormat = output;
+    await autoSave(item);
+    setStatus(item.id, 'done', 'готово');
+  } catch(e) {
+    const et = document.getElementById('eta-' + item.id);
+    if (et) et.textContent = 'Ошибка: ' + e.message;
+    setStatus(item.id, 'err', 'ошибка');
+  }
 }
 
-function sendToAnalysis(id) { const item = files.find(x => String(x.id) === String(id)); if (!item || !item.result) return; document.getElementById('transcription').value = item.result; currentProjectPath = item.baseName + '/'; if (rootFolderHandle) updateProjectFolderUI(rootFolderHandle.name); document.querySelectorAll('.tab')[1].click(); }
-function setStatus(id, cls, text) { const el = document.getElementById('status-'+id); if (el) { el.className='status status-'+cls; el.textContent=text; } }
+function sendToAnalysis(id) {
+  const item = files.find(x => x.id === id);
+  if (!item || !item.result) return;
+  document.getElementById('transcription').value = item.result;
+  currentBaseName = item.baseName;
+  if (rootFolderHandle) updateProjectFolderUI();
+  document.querySelectorAll('.tab')[1].click();
+}
+
+function setStatus(id, cls, text) {
+  const el = document.getElementById('status-' + id);
+  if (el) { el.className = 'status status-' + cls; el.textContent = text; }
+}
 
 async function autoSave(item) {
   const ext = item.outputFormat || 'txt';
   const name = item.baseName + '.' + ext;
-  
+
   if (rootFolderHandle) {
     try {
-      const fh = await rootFolderHandle.getFileHandle(item.baseName + '/' + name, { create: true });
+      // getDirectoryHandle создаёт подпапку; getFileHandle с путём через '/' не работает
+      const dir = await rootFolderHandle.getDirectoryHandle(item.baseName, { create: true });
+
+      const fh = await dir.getFileHandle(name, { create: true });
       const w = await fh.createWritable();
       await w.write(item.result);
       await w.close();
-      const et = document.getElementById('eta-'+item.id);
+
+      const et = document.getElementById('eta-' + item.id);
       if (et) et.textContent = 'Сохранено: ' + item.baseName + '/' + name;
-      try { await rootFolderHandle.getFileHandle(item.baseName + '/prompt.txt'); } catch {
+
+      try {
+        await dir.getFileHandle('prompt.txt');
+      } catch {
         const dp = document.getElementById('system-prompt').value || PROMPTS.free;
-        const pfh = await rootFolderHandle.getFileHandle(item.baseName + '/prompt.txt', { create: true });
+        const pfh = await dir.getFileHandle('prompt.txt', { create: true });
         const pw = await pfh.createWritable();
         await pw.write(dp);
         await pw.close();
@@ -626,7 +744,7 @@ async function autoSave(item) {
       return;
     } catch(e) {}
   }
-  
+
   const blob = new Blob([item.result], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -634,10 +752,18 @@ async function autoSave(item) {
   a.click();
 }
 
-function downloadResult(id) { const item = files.find(x => String(x.id) === String(id)); if (item) autoSave(item); }
-function copyResult(id) { const el = document.getElementById('text-'+id); if (!el) return; const text = el.textContent; if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => alert('Скопировано!')); } else { const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Скопировано!'); } }
+function downloadResult(id) {
+  const item = files.find(x => x.id === id);
+  if (item) autoSave(item);
+}
 
-(async () => { await loadConfigFromServer(); loadSettings(); updateProjectFolderUI(localStorage.getItem('root_folder_name') || null); })();
+function copyResult(id) {
+  const el = document.getElementById('text-' + id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => alert('Скопировано!'));
+}
+
+(async () => { await loadConfigFromServer(); loadSettings(); })();
 </script>
 </body>
 </html>
