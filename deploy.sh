@@ -12,7 +12,7 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 # на сервере: pull → cp → restart
-ssh "$SERVER" bash << 'EOF'
+ssh -o IdentitiesOnly=yes -i ~/.ssh/id_ed25519 "$SERVER" bash << 'EOF'
   REMOTE_DIR="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e"
   cd "$REMOTE_DIR/whisper-ui"
   git pull origin main
