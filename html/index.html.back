@@ -11,6 +11,7 @@
 body { font-family: sans-serif; max-width: 960px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
 h1 { color: #333; font-size: 22px; margin-bottom: 16px; }
 
+/* tabs */
 .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
 .tab { padding: 10px 24px; border-radius: 6px 6px 0 0; cursor: pointer; background: #ddd; border: none; font-size: 15px; }
 .tab.active { background: white; font-weight: bold; color: #1976D2; }
@@ -18,8 +19,10 @@ h1 { color: #333; font-size: 22px; margin-bottom: 16px; }
 .page { display: none; }
 .page.active { display: block; }
 
+/* cards */
 .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 16px; }
 
+/* form elements */
 label { font-weight: bold; font-size: 13px; display: block; margin-top: 12px; margin-bottom: 4px; }
 input[type=file] { font-size: 13px; }
 select, input[type=text], input[type=password], textarea {
@@ -29,21 +32,23 @@ textarea { resize: vertical; }
 .row { display: flex; gap: 16px; flex-wrap: wrap; }
 .row > div { flex: 1; min-width: 200px; }
 
+/* buttons */
 .btn { border: none; border-radius: 4px; cursor: pointer; padding: 8px 18px; font-size: 14px; color: white; }
 .btn-blue  { background: #2196F3; } .btn-blue:hover  { background: #1976D2; }
 .btn-green { background: #4CAF50; } .btn-green:hover { background: #388E3C; }
 .btn-orange{ background: #FF9800; } .btn-orange:hover{ background: #F57C00; }
 .btn-gray  { background: #888; }   .btn-gray:hover  { background: #666; }
-.btn-purple{ background: #9C27B0; } .btn-purple:hover{ background: #7B1FA2; }
 .btn:disabled { background: #aaa !important; cursor: not-allowed; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 
+/* file queue */
 .file-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f9f9f9; border-radius: 4px; margin-bottom: 6px; font-size: 13px; }
 .file-item .name { flex: 1; }
 .file-item .meta { color: #888; }
 .status-wait { color: #aaa; } .status-running { color: #FF9800; font-weight: bold; }
 .status-done { color: #4CAF50; font-weight: bold; } .status-err { color: #f44336; }
 
+/* progress */
 .progress-wrap { margin-top: 8px; }
 .progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
 .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
@@ -53,10 +58,12 @@ textarea { resize: vertical; }
 @keyframes ind { 0%{margin-left:-35%} 100%{margin-left:100%} }
 .eta-text { font-size: 12px; color: #666; }
 
+/* result blocks */
 .result-block { margin-top: 10px; }
 .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-weight: bold; flex-wrap: wrap; }
 .result-area { white-space: pre-wrap; background: #f9f9f9; padding: 12px; border-radius: 4px; border: 1px solid #ddd; min-height: 60px; font-size: 13px; max-height: 250px; overflow-y: auto; }
 
+/* chat */
 .chat-area { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
 .messages { min-height: 200px; max-height: 420px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .msg { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
@@ -66,16 +73,15 @@ textarea { resize: vertical; }
 .chat-input-row { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #ddd; background: #fafafa; }
 .chat-input-row textarea { flex: 1; min-height: 44px; max-height: 120px; resize: none; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
 
+/* settings */
 .settings-toggle { font-size: 13px; color: #1976D2; cursor: pointer; margin-bottom: 8px; display: inline-block; }
 .settings-panel { display: none; }
 .settings-panel.open { display: block; }
 
+/* provider badge */
 .provider-badge { display: inline-block; border-radius: 3px; padding: 2px 8px; font-size: 11px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
+.badge-groq { background: #e8f5e9; color: #2e7d32; }
 .badge-deepseek { background: #e3f2fd; color: #1565c0; }
-.badge-qwen { background: #e8f5e9; color: #2e7d32; }
-
-.project-notice { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 8px 12px; margin: 8px 0; font-size: 13px; display: none; }
-.project-notice.show { display: block; }
 
 .info { font-size: 12px; color: #888; margin-top: 4px; }
 .tag { display: inline-block; background: #e3f2fd; color: #1565c0; border-radius: 3px; padding: 2px 8px; font-size: 12px; margin: 2px; cursor: pointer; }
@@ -96,11 +102,6 @@ textarea { resize: vertical; }
   <div class="card">
     <label>Аудиофайлы (можно несколько):</label>
     <input type="file" id="fileInput" accept="audio/*,video/*" multiple onchange="addFiles()">
-    
-    <div id="projectFolderNotice" class="project-notice">
-      📁 Папка проекта: <strong id="projectFolderPath"></strong>
-      <br>Транскрибация и prompt.txt сохраняются автоматически.
-    </div>
 
     <div class="row" style="margin-top:12px">
       <div>
@@ -133,10 +134,10 @@ textarea { resize: vertical; }
 
     <div class="btn-row">
       <button class="btn btn-blue" id="startBtn" onclick="startAll()">Транскрибировать все</button>
-      <button class="btn btn-green" id="folderBtn" onclick="pickRootFolder()">📁 Корневая папка проектов</button>
-      <button class="btn btn-purple" onclick="editProjectPrompt()">📝 Редактировать prompt.txt</button>
+      <button class="btn btn-green" id="folderBtn" onclick="pickFolder()">📁 Папка сохранения</button>
       <button class="btn btn-orange" onclick="clearList()">Очистить</button>
     </div>
+    <div id="folder-info" class="info"></div>
   </div>
 
   <div id="results"></div>
@@ -148,55 +149,44 @@ textarea { resize: vertical; }
   <!-- Settings -->
   <div class="card">
     <span class="settings-toggle" onclick="toggleSettings()">⚙️ Настройки API
-      <span id="provider-badge" class="provider-badge badge-qwen">Qwen</span>
+      <span id="provider-badge" class="provider-badge badge-groq">Groq</span>
     </span>
     <div class="settings-panel" id="settings-panel">
 
       <label>Провайдер анализа:</label>
-      <select id="llmProvider" onchange="onProviderChange(); saveAllSettings()">
-        <option value="qwen">Qwen (OpenRouter) ★ Рекомендуется</option>
-        <option value="deepseek">DeepSeek</option>
+      <select id="llmProvider" onchange="onProviderChange(); saveKey()">
+        <option value="groq">Groq (быстро, бесплатно)</option>
+        <option value="deepseek">DeepSeek (мощнее, нужен ключ)</option>
       </select>
 
-      <!-- Qwen (OpenRouter) settings -->
-      <div id="qwen-settings">
-        <label>API ключ OpenRouter (<a href="https://openrouter.ai/keys" target="_blank">получить бесплатно</a>):</label>
-        <input type="password" id="openrouter-key" placeholder="sk-or-v1-..." oninput="saveAllSettings()">
-        
-        <label>Модель Qwen:</label>
-        <select id="qwen-model-select" onchange="onModelSelectChange('qwen')">
-          <option value="qwen/qwen-2.5-32b-instruct">Qwen 2.5 32B — оптимальный (★ рекомендуется)</option>
-          <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B — максимальное качество</option>
-          <option value="qwen/qwen-2.5-7b-instruct">Qwen 2.5 7B — быстрый и дешёвый</option>
-          <option value="qwen/qwq-32b-preview">Qwen QwQ 32B — с рассуждением</option>
-          <option value="__custom__">🔧 Другая модель (ввести вручную)...</option>
+      <!-- Groq settings -->
+      <div id="groq-settings">
+        <label>API ключ Groq (<a href="https://console.groq.com" target="_blank">получить бесплатно</a>):</label>
+        <input type="password" id="groq-key" placeholder="gsk_..." oninput="saveKey()">
+        <label>Модель Groq:</label>
+        <select id="groq-model" onchange="saveKey()">
+          <option value="llama-3.3-70b-versatile">llama-3.3-70b — лучший русский (медленнее)</option>
+          <option value="llama-3.1-8b-instant">llama-3.1-8b — быстрый</option>
+          <option value="llama-3.2-11b-vision-preview">llama-3.2-11b vision — для картинок</option>
         </select>
-        <input type="text" id="qwen-model-custom" placeholder="Введите ID модели (например: meta-llama/llama-4-maverick)" 
-               style="display:none; margin-top:4px" oninput="saveAllSettings()">
-        <div class="info">Ключ OpenRouter бесплатный. Цена зависит от модели. Отличный русский язык.</div>
+        <div class="info">При выборе Groq — картинки распознаются через Groq Vision API.</div>
       </div>
 
       <!-- DeepSeek settings -->
       <div id="deepseek-settings" style="display:none">
         <label>API ключ DeepSeek (<a href="https://platform.deepseek.com" target="_blank">получить</a>):</label>
-        <input type="password" id="deepseek-key" placeholder="sk-..." oninput="saveAllSettings()">
-        
+        <input type="password" id="deepseek-key" placeholder="sk-..." oninput="saveKey()">
         <label>Модель DeepSeek:</label>
-        <select id="deepseek-model-select" onchange="onModelSelectChange('deepseek')">
-          <option value="deepseek-chat">DeepSeek V3 — универсальный</option>
-          <option value="deepseek-reasoner">DeepSeek R1 — с рассуждением</option>
-          <option value="__custom__">🔧 Другая модель (ввести вручную)...</option>
+        <select id="deepseek-model" onchange="saveKey()">
+          <option value="deepseek-chat">deepseek-chat — универсальный</option>
+          <option value="deepseek-reasoner">deepseek-reasoner — с рассуждением</option>
         </select>
-        <input type="text" id="deepseek-model-custom" placeholder="Введите название модели" 
-               style="display:none; margin-top:4px" oninput="saveAllSettings()">
-        <div class="info">DeepSeek — мощный анализ. Бесплатно 50 запросов/день при регистрации.</div>
+        <div class="info">Картинки со сценарием распознаются через Groq Vision — для этого также нужен Groq API ключ.</div>
       </div>
 
       <label>Системный промпт (инструкция для ИИ):</label>
-      <textarea id="system-prompt" rows="4" oninput="saveAllSettings()"></textarea>
-      <div class="info">
-        <button class="btn btn-purple" onclick="loadPromptFromProject()" style="font-size:12px;padding:4px 10px">📂 Загрузить prompt.txt из проекта</button>
-        Шаблоны:
+      <textarea id="system-prompt" rows="4"></textarea>
+      <div class="info">Шаблоны:
         <span class="tag" onclick="setPrompt('free')">📝 Свободный отчёт</span>
         <span class="tag" onclick="setPrompt('table')">📊 Таблица оценки</span>
         <span class="tag" onclick="setPrompt('tone')">🎭 Тональность и поведение</span>
@@ -252,21 +242,15 @@ if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-// ===== GLOBAL STATE =====
-let rootFolderHandle = null;
-let currentProjectPath = '';
-let chatHistory = [];
-
 // ===== TABS =====
 function showTab(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
-  if (id === 'tab-analyze') loadPromptFromProject();
 }
 
-// ===== PROMPT TEMPLATES =====
+// ===== SETTINGS =====
 const PROMPTS = {
   free: `Ты эксперт по оценке качества обслуживания. Тебе дан сценарий проверки и транскрипция реального разговора.
 
@@ -311,173 +295,54 @@ const PROMPTS = {
 
 function setPrompt(type) {
   document.getElementById('system-prompt').value = PROMPTS[type];
-  saveAllSettings();
+  saveKey();
 }
 
 function toggleSettings() {
   document.getElementById('settings-panel').classList.toggle('open');
 }
 
-// ===== MODEL SELECTION =====
-function onModelSelectChange(provider) {
-  const selectEl = document.getElementById(provider + '-model-select');
-  const customEl = document.getElementById(provider + '-model-custom');
-  
-  if (selectEl.value === '__custom__') {
-    customEl.style.display = 'block';
-    customEl.focus();
-  } else {
-    customEl.style.display = 'none';
-  }
-  saveAllSettings();
-}
-
-function getSelectedModel(provider) {
-  const selectEl = document.getElementById(provider + '-model-select');
-  const customEl = document.getElementById(provider + '-model-custom');
-  
-  if (selectEl.value === '__custom__') {
-    return customEl.value.trim() || '__custom__';
-  }
-  return selectEl.value;
-}
-
-function setModelFromSaved(provider, savedModel) {
-  const selectEl = document.getElementById(provider + '-model-select');
-  const customEl = document.getElementById(provider + '-model-custom');
-  
-  // Проверяем, есть ли такая модель в списке
-  let found = false;
-  for (const option of selectEl.options) {
-    if (option.value === savedModel && option.value !== '__custom__') {
-      selectEl.value = savedModel;
-      customEl.style.display = 'none';
-      found = true;
-      break;
-    }
-  }
-  
-  if (!found && savedModel && savedModel !== '__custom__') {
-    // Модель не из списка — показываем custom
-    selectEl.value = '__custom__';
-    customEl.value = savedModel;
-    customEl.style.display = 'block';
-  }
-}
-
 function onProviderChange() {
   const provider = document.getElementById('llmProvider').value;
-  document.getElementById('qwen-settings').style.display = provider === 'qwen' ? 'block' : 'none';
-  document.getElementById('deepseek-settings').style.display = provider === 'deepseek' ? 'block' : 'none';
-  
+  const isGroq = provider === 'groq';
+  document.getElementById('groq-settings').style.display = isGroq ? 'block' : 'none';
+  document.getElementById('deepseek-settings').style.display = isGroq ? 'none' : 'block';
   const badge = document.getElementById('provider-badge');
-  if (provider === 'qwen') {
-    badge.textContent = 'Qwen';
-    badge.className = 'provider-badge badge-qwen';
+  if (isGroq) {
+    badge.textContent = 'Groq';
+    badge.className = 'provider-badge badge-groq';
   } else {
     badge.textContent = 'DeepSeek';
     badge.className = 'provider-badge badge-deepseek';
   }
 }
 
-function saveAllSettings() {
-  localStorage.setItem('openrouter_key', document.getElementById('openrouter-key').value);
-  localStorage.setItem('qwen_model', getSelectedModel('qwen'));
+function saveKey() {
+  localStorage.setItem('groq_key', document.getElementById('groq-key').value);
+  localStorage.setItem('groq_model', document.getElementById('groq-model').value);
   localStorage.setItem('deepseek_key', document.getElementById('deepseek-key').value);
-  localStorage.setItem('deepseek_model', getSelectedModel('deepseek'));
+  localStorage.setItem('deepseek_model', document.getElementById('deepseek-model').value);
   localStorage.setItem('llm_provider', document.getElementById('llmProvider').value);
-  localStorage.setItem('system_prompt', document.getElementById('system-prompt').value);
+  localStorage.setItem('groq_prompt', document.getElementById('system-prompt').value);
 }
 
 function loadSettings() {
-  const ork = localStorage.getItem('openrouter_key');
-  const qm = localStorage.getItem('qwen_model');
+  const k = localStorage.getItem('groq_key');
+  const m = localStorage.getItem('groq_model');
   const dk = localStorage.getItem('deepseek_key');
   const dm = localStorage.getItem('deepseek_model');
   const prov = localStorage.getItem('llm_provider');
-  const sp = localStorage.getItem('system_prompt');
-  
-  if (ork) document.getElementById('openrouter-key').value = ork;
-  if (qm) setModelFromSaved('qwen', qm);
+  const p = localStorage.getItem('groq_prompt');
+  if (k) document.getElementById('groq-key').value = k;
+  if (m) document.getElementById('groq-model').value = m;
   if (dk) document.getElementById('deepseek-key').value = dk;
-  if (dm) setModelFromSaved('deepseek', dm);
+  if (dm) document.getElementById('deepseek-model').value = dm;
   if (prov) document.getElementById('llmProvider').value = prov;
-  if (sp) document.getElementById('system-prompt').value = sp;
+  if (p) document.getElementById('system-prompt').value = p;
   else document.getElementById('system-prompt').value = PROMPTS.free;
-  
   onProviderChange();
-  
   const wm = localStorage.getItem('whisper_model');
   if (wm) document.getElementById('whisper-model').value = wm;
-  
-  restoreRootFolder();
-}
-
-function restoreRootFolder() {
-  const saved = localStorage.getItem('root_folder_name');
-  if (saved) updateProjectFolderUI(saved);
-}
-
-// ===== ROOT FOLDER MANAGEMENT =====
-async function pickRootFolder() {
-  if (!window.showDirectoryPicker) {
-    alert('Используйте Chrome или Edge для работы с папками');
-    return;
-  }
-  try {
-    rootFolderHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
-    localStorage.setItem('root_folder_name', rootFolderHandle.name);
-    updateProjectFolderUI(rootFolderHandle.name);
-    alert('Корневая папка выбрана: ' + rootFolderHandle.name + '\nТеперь для каждого аудиофайла будет создаваться подпапка.');
-  } catch(e) {}
-}
-
-function updateProjectFolderUI(folderName) {
-  document.getElementById('projectFolderPath').textContent = folderName + '/[имя_аудио]/';
-  document.getElementById('projectFolderNotice').classList.add('show');
-}
-
-// ===== PROJECT PROMPT MANAGEMENT =====
-async function editProjectPrompt() {
-  if (!rootFolderHandle || !currentProjectPath) {
-    alert('Сначала выберите корневую папку и добавьте аудиофайл.');
-    return;
-  }
-  let currentPrompt = '';
-  try { currentPrompt = await readFileFromProject('prompt.txt'); } catch(e) {}
-  const newPrompt = prompt('Редактировать prompt.txt для этого проекта:', currentPrompt || PROMPTS.free);
-  if (newPrompt !== null) {
-    await writeFileToProject('prompt.txt', newPrompt);
-    document.getElementById('system-prompt').value = newPrompt;
-    saveAllSettings();
-    alert('prompt.txt сохранён в папку проекта');
-  }
-}
-
-async function loadPromptFromProject() {
-  if (!rootFolderHandle || !currentProjectPath) return;
-  try {
-    const promptText = await readFileFromProject('prompt.txt');
-    if (promptText.trim()) {
-      document.getElementById('system-prompt').value = promptText;
-      saveAllSettings();
-    }
-  } catch(e) {}
-}
-
-async function readFileFromProject(filename) {
-  if (!rootFolderHandle) throw new Error('Папка проекта не выбрана');
-  const fileHandle = await rootFolderHandle.getFileHandle(filename);
-  const file = await fileHandle.getFile();
-  return await file.text();
-}
-
-async function writeFileToProject(filename, content) {
-  if (!rootFolderHandle) throw new Error('Папка проекта не выбрана');
-  const fileHandle = await rootFolderHandle.getFileHandle(filename, { create: true });
-  const writable = await fileHandle.createWritable();
-  await writable.write(content);
-  await writable.close();
 }
 
 // ===== SCENARIO FILE LOADING =====
@@ -500,7 +365,21 @@ async function loadScenarioFile() {
     status.textContent = 'PDF загружен (' + pdf.numPages + ' стр.)';
 
   } else if (file.type.startsWith('image/')) {
-    status.textContent = 'Читаю через Tesseract OCR...';
+    const key = document.getElementById('groq-key').value;
+    const b64 = await fileToBase64(file);
+    if (key) {
+      status.textContent = 'Читаю текст через Groq Vision...';
+      try {
+        const text = await groqVision(key, b64, file.type, 'Прочитай весь текст с этого изображения. Верни только текст, без комментариев.');
+        document.getElementById('scenario').value = text;
+        status.textContent = 'Текст извлечён через Groq Vision';
+        return;
+      } catch(e) {
+        status.textContent = 'Groq Vision недоступен (' + e.message + '), пробую Tesseract...';
+      }
+    } else {
+      status.textContent = 'Нет ключа Groq, читаю через Tesseract...';
+    }
     try {
       const result = await Tesseract.recognize(file, 'rus+eng', {
         logger: m => { if (m.status === 'recognizing text') status.textContent = 'Tesseract: ' + Math.round(m.progress * 100) + '%'; }
@@ -526,36 +405,49 @@ function fileToBase64(file) {
   });
 }
 
-// ===== OPENROUTER API =====
-async function openrouterChat(key, model, systemPrompt, messages) {
+// ===== GROQ API =====
+let chatHistory = [];
+
+async function groqChat(key, model, systemPrompt, messages) {
   const body = {
     model,
-    messages: [
-      ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-      ...messages
-    ],
+    messages: [{ role: 'system', content: systemPrompt }, ...messages],
     temperature: 0.3,
     max_tokens: 2048
   };
-  
-  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + key,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': window.location.href,
-      'X-Title': 'Whisper Analysis'
-    },
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.error?.message || 'Ошибка OpenRouter API');
+    throw new Error(err.error?.message || 'Ошибка Groq API');
   }
-  
   const data = await res.json();
-  return data.choices?.[0]?.message?.content || 'Пустой ответ от модели';
+  return data.choices[0].message.content;
+}
+
+async function groqVision(key, b64, mimeType, prompt) {
+  const body = {
+    model: 'llama-3.2-11b-vision-preview',
+    messages: [{ role: 'user', content: [
+      { type: 'text', text: prompt },
+      { type: 'image_url', image_url: { url: 'data:' + mimeType + ';base64,' + b64 } }
+    ]}],
+    max_tokens: 2048
+  };
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'Ошибка Groq Vision');
+  }
+  const data = await res.json();
+  return data.choices[0]?.message?.content || '';
 }
 
 // ===== DEEPSEEK API =====
@@ -586,14 +478,14 @@ async function getAIResponse(messages) {
 
   if (provider === 'deepseek') {
     const key = document.getElementById('deepseek-key').value;
-    if (!key) throw new Error('Введите API ключ DeepSeek в настройках.\nПолучить: https://platform.deepseek.com');
-    const model = getSelectedModel('deepseek');
+    if (!key) throw new Error('Введите API ключ DeepSeek в настройках');
+    const model = document.getElementById('deepseek-model').value;
     return await deepseekChat(key, model, systemPrompt, messages);
   } else {
-    const key = document.getElementById('openrouter-key').value;
-    if (!key) throw new Error('Введите API ключ OpenRouter в настройках.\nПолучить: https://openrouter.ai/keys');
-    const model = getSelectedModel('qwen');
-    return await openrouterChat(key, model, systemPrompt, messages);
+    const key = document.getElementById('groq-key').value;
+    if (!key) throw new Error('Введите API ключ Groq в настройках');
+    const model = document.getElementById('groq-model').value;
+    return await groqChat(key, model, systemPrompt, messages);
   }
 }
 
@@ -627,17 +519,10 @@ async function analyze() {
     thinkingEl.remove();
     addMessage('assistant', reply);
     chatHistory.push({ role: 'assistant', content: reply });
-    
-    if (rootFolderHandle && currentProjectPath) {
-      try {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        await writeFileToProject(`analysis_${timestamp}.txt`, reply);
-      } catch(e) {}
-    }
   } catch(e) {
     thinkingEl.textContent = 'Ошибка: ' + e.message;
     thinkingEl.classList.remove('thinking');
-    if (e.message.includes('ключ') || e.message.includes('API')) toggleSettings();
+    if (e.message.includes('ключ')) toggleSettings();
   }
 }
 
@@ -660,7 +545,7 @@ async function sendMessage() {
   } catch(e) {
     thinkingEl.textContent = 'Ошибка: ' + e.message;
     thinkingEl.classList.remove('thinking');
-    if (e.message.includes('ключ') || e.message.includes('API')) toggleSettings();
+    if (e.message.includes('ключ')) toggleSettings();
   }
 }
 
@@ -705,36 +590,28 @@ function saveWhisperSettings() {
 
 // ===== TAB 1: TRANSCRIPTION =====
 let files = [];
+let outputDirHandle = null;
 
 function fmtSize(b) { return (b/1024/1024).toFixed(1) + ' МБ'; }
-function fmtTime(s) { 
-  s = Math.round(s); 
-  return s < 60 ? s + ' сек' : Math.floor(s/60) + ' мин ' + (s%60) + ' сек'; 
+function fmtTime(s) { s=Math.round(s); return s<60 ? s+' сек' : Math.floor(s/60)+' мин '+(s%60)+' сек'; }
+
+async function pickFolder() {
+  if (!window.showDirectoryPicker) { alert('Используйте Chrome или Edge'); return; }
+  try {
+    outputDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    document.getElementById('folder-info').textContent = 'Папка: ' + outputDirHandle.name;
+  } catch(e) {}
 }
 
 function addFiles() {
   const input = document.getElementById('fileInput');
-  if (!rootFolderHandle && window.showDirectoryPicker) {
-    pickRootFolder().then(() => { if (rootFolderHandle) processNewFiles(input); });
-  } else {
-    processNewFiles(input);
-  }
-}
-
-function processNewFiles(input) {
   for (const f of input.files) {
     if (files.find(x => x.file.name === f.name && x.file.size === f.size)) continue;
     const id = Date.now() + Math.random();
-    const fileBaseName = f.name.replace(/\.[^.]+$/, '');
-    const item = { 
-      id, file: f, duration: 0, status: 'wait',
-      baseName: fileBaseName, projectPath: fileBaseName + '/'
-    };
+    const item = { id, file: f, duration: 0, status: 'wait' };
     files.push(item);
     renderFileItem(item);
     detectDuration(item);
-    currentProjectPath = item.projectPath;
-    updateProjectFolderUI(rootFolderHandle ? rootFolderHandle.name : 'не выбрана');
   }
   input.value = '';
 }
@@ -747,11 +624,8 @@ function detectDuration(item) {
       ctx.decodeAudioData(e.target.result, buf => {
         item.duration = buf.duration;
         const el = document.getElementById('meta-' + item.id);
-        if (el) {
-          const m = Math.floor(item.duration/60), s = Math.floor(item.duration%60);
-          el.textContent = fmtSize(item.file.size) + ' | ' + m + ':' + String(s).padStart(2,'0');
-        }
-      }, () => {});
+        if (el) { const m=Math.floor(item.duration/60),s=Math.floor(item.duration%60); el.textContent = fmtSize(item.file.size)+' | '+m+':'+String(s).padStart(2,'0'); }
+      }, ()=>{});
     } catch(e) {}
   };
   reader.readAsArrayBuffer(item.file);
@@ -762,28 +636,14 @@ function renderFileItem(item) {
   const div = document.createElement('div');
   div.className = 'file-item';
   div.id = 'item-' + item.id;
-  div.innerHTML = `
-    <span class="name">${item.file.name}</span>
-    <span class="meta" id="meta-${item.id}">${fmtSize(item.file.size)}</span>
-    <span class="status status-wait" id="status-${item.id}">ожидание</span>
-  `;
+  div.innerHTML = `<span class="name">${item.file.name}</span><span class="meta" id="meta-${item.id}">${fmtSize(item.file.size)}</span><span class="status status-wait" id="status-${item.id}">ожидание</span>`;
   list.appendChild(div);
 }
 
-function clearList() { 
-  files = []; 
-  document.getElementById('fileList').innerHTML = ''; 
-  document.getElementById('results').innerHTML = '';
-  currentProjectPath = '';
-  document.getElementById('projectFolderNotice').classList.remove('show');
-}
+function clearList() { files=[]; document.getElementById('fileList').innerHTML=''; document.getElementById('results').innerHTML=''; }
 
 async function startAll() {
   if (!files.length) { alert('Добавьте файлы'); return; }
-  if (!rootFolderHandle && window.showDirectoryPicker) {
-    const proceed = confirm('Корневая папка не выбрана. Хотите выбрать папку для автосохранения?');
-    if (proceed) await pickRootFolder();
-  }
   document.getElementById('startBtn').disabled = true;
   for (const item of files) { if (item.status !== 'done') await processFile(item); }
   document.getElementById('startBtn').disabled = false;
@@ -793,11 +653,6 @@ async function processFile(item) {
   const lang = document.getElementById('lang').value;
   const output = document.getElementById('output').value;
   setStatus(item.id, 'running', 'обработка...');
-
-  if (rootFolderHandle) {
-    currentProjectPath = item.baseName + '/';
-    updateProjectFolderUI(rootFolderHandle.name);
-  }
 
   let resultBlock = document.getElementById('result-' + item.id);
   if (!resultBlock) {
@@ -834,15 +689,12 @@ async function processFile(item) {
       xhr.upload.onprogress = e => {
         if (e.lengthComputable) {
           const pct = Math.round(e.loaded/e.total*100);
-          const ubar = document.getElementById('ubar-'+item.id);
-          const eta = document.getElementById('eta-'+item.id);
-          if (ubar) ubar.style.width = pct+'%';
-          if (eta) eta.textContent = 'Загрузка: '+pct+'%';
+          document.getElementById('ubar-'+item.id).style.width = pct+'%';
+          document.getElementById('eta-'+item.id).textContent = 'Загрузка: '+pct+'%';
         }
       };
       xhr.upload.onload = () => {
-        const ubar = document.getElementById('ubar-'+item.id);
-        if (ubar) ubar.className = 'progress-fill fill-orange';
+        document.getElementById('ubar-'+item.id).className = 'progress-fill fill-orange';
         const isFast = document.getElementById('whisper-model').value === 'fast';
         const est = item.duration > 0 ? item.duration * (isFast ? 0.35 : 0.75) : null;
         iv = setInterval(() => {
@@ -858,28 +710,21 @@ async function processFile(item) {
           if (xhr.readyState === 4) clearInterval(iv);
         }, 1000);
       };
-      xhr.onload = () => { if(iv)clearInterval(iv); xhr.status>=200&&xhr.status<300 ? resolve(xhr.responseText) : reject(new Error('Ошибка сервера: '+xhr.status)); };
-      xhr.onerror = () => { if(iv)clearInterval(iv); reject(new Error('Ошибка соединения с сервером Whisper')); };
+      xhr.onload = () => { if(iv)clearInterval(iv); xhr.status>=200&&xhr.status<300 ? resolve(xhr.responseText) : reject(new Error('Ошибка: '+xhr.status)); };
+      xhr.onerror = () => { if(iv)clearInterval(iv); reject(new Error('Ошибка соединения')); };
       xhr.send(form);
     });
 
-    const ubar = document.getElementById('ubar-'+item.id);
-    const eta = document.getElementById('eta-'+item.id);
-    if (ubar) ubar.className = 'progress-fill fill-green';
-    if (eta) eta.textContent = 'Готово!';
-    
-    const textArea = document.getElementById('text-'+item.id);
-    if (textArea) textArea.textContent = text;
-    
+    document.getElementById('ubar-'+item.id).className = 'progress-fill fill-green';
+    document.getElementById('eta-'+item.id).textContent = 'Готово!';
+    document.getElementById('text-'+item.id).textContent = text;
     item.result = text;
     item.outputFormat = output;
     await autoSave(item);
     setStatus(item.id, 'done', 'готово');
   } catch(e) {
-    const eta = document.getElementById('eta-'+item.id);
-    if (eta) eta.textContent = 'Ошибка: ' + e.message;
+    document.getElementById('eta-'+item.id).textContent = e.message;
     setStatus(item.id, 'err', 'ошибка');
-    console.error('Ошибка транскрибации:', e.message);
   }
 }
 
@@ -887,8 +732,6 @@ function sendToAnalysis(id) {
   const item = files.find(x => String(x.id) === String(id));
   if (!item || !item.result) return;
   document.getElementById('transcription').value = item.result;
-  currentProjectPath = item.baseName + '/';
-  if (rootFolderHandle) updateProjectFolderUI(rootFolderHandle.name);
   document.querySelectorAll('.tab')[1].click();
 }
 
@@ -899,29 +742,17 @@ function setStatus(id, cls, text) {
 
 async function autoSave(item) {
   const ext = item.outputFormat || 'txt';
-  const name = item.baseName + '.' + ext;
-  
-  if (rootFolderHandle) {
+  const name = item.file.name.replace(/\.[^.]+$/, '') + '.' + ext;
+  if (outputDirHandle) {
     try {
-      const fullName = item.baseName + '/' + name;
-      const fh = await rootFolderHandle.getFileHandle(fullName, { create: true });
+      const fh = await outputDirHandle.getFileHandle(name, { create: true });
       const w = await fh.createWritable();
       await w.write(item.result);
       await w.close();
-      const eta = document.getElementById('eta-'+item.id);
-      if (eta) eta.textContent = 'Сохранено в папку: ' + fullName;
-      // Создаём prompt.txt
-      try { await rootFolderHandle.getFileHandle(item.baseName + '/prompt.txt'); } catch {
-        const defaultPrompt = document.getElementById('system-prompt').value || PROMPTS.free;
-        const pfh = await rootFolderHandle.getFileHandle(item.baseName + '/prompt.txt', { create: true });
-        const pw = await pfh.createWritable();
-        await pw.write(defaultPrompt);
-        await pw.close();
-      }
+      document.getElementById('eta-'+item.id).textContent = 'Сохранено: ' + name;
       return;
     } catch(e) {}
   }
-  
   const blob = new Blob([item.result], { type: 'text/plain' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -938,13 +769,16 @@ function copyResult(id) {
   const el = document.getElementById('text-'+id);
   if (!el) return;
   const text = el.textContent;
-  if (navigator.clipboard?.writeText) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => alert('Скопировано!'));
   } else {
     const ta = document.createElement('textarea');
-    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
     document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
+    ta.select();
+    document.execCommand('copy');
     document.body.removeChild(ta);
     alert('Скопировано!');
   }
