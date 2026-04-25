@@ -196,7 +196,8 @@ textarea { resize: vertical; }
         <textarea id="user-input" placeholder="Задайте вопрос или нажмите Анализировать..." onkeydown="handleKey(event)" rows="1"></textarea>
         <button class="btn btn-green" onclick="analyze()">Анализировать</button>
         <button class="btn btn-blue" onclick="sendMessage()">Отправить</button>
-        <button class="btn btn-orange" onclick="saveChat()">Сохранить чат</button>
+        <button class="btn btn-purple" onclick="saveChat()">Сохранить чат</button>
+        <button class="btn btn-gray" onclick="saveChatAs()" title="Выбрать другую папку">📂</button>
       </div>
     </div>
   </div>
@@ -511,18 +512,54 @@ function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
 
-function saveChat() {
-  const msgs = document.querySelectorAll('#messages .msg');
-  if (!msgs.length) return;
+function getChatText() {
   let text = '';
-  msgs.forEach(m => {
+  document.querySelectorAll('#messages .msg').forEach(m => {
     const role = m.classList.contains('user') ? 'Проверяющий' : 'Ассистент';
-    if (m.textContent.trim()) text += `[${role}]\n${m.textContent.trim()}\n\n`;
+    if (m.textContent.trim()) text += '[' + role + ']\n' + m.textContent.trim() + '\n\n';
   });
+  return text;
+}
+
+function chatFileName() {
+  return 'chat_' + new Date().toISOString().slice(0, 16).replace('T', '_').replace(':', '-') + '.txt';
+}
+
+function downloadFile(fname, text) {
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-  a.download = 'chat_' + new Date().toISOString().slice(0, 16).replace('T', '_').replace(':', '-') + '.txt';
+  a.download = fname;
   a.click();
+}
+
+async function saveChat() {
+  const text = getChatText();
+  if (!text.trim()) return;
+  const fname = chatFileName();
+  if (rootFolderHandle && currentBaseName) {
+    try {
+      await writeProjectFile(fname, text);
+      alert('Сохранено: ' + rootFolderHandle.name + '/' + currentBaseName + '/' + fname);
+      return;
+    } catch(e) {}
+  }
+  downloadFile(fname, text);
+}
+
+async function saveChatAs() {
+  const text = getChatText();
+  if (!text.trim()) return;
+  const fname = chatFileName();
+  try {
+    const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
+    const fh = await dir.getFileHandle(fname, { create: true });
+    const w = await fh.createWritable();
+    await w.write(text);
+    await w.close();
+    alert('Сохранено в: ' + dir.name + '/' + fname);
+  } catch(e) {
+    if (e.name !== 'AbortError') downloadFile(fname, text);
+  }
 }
 
 function addMessage(role, text, hide = false, thinking = false) {
