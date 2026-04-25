@@ -2,9 +2,7 @@
 set -e
 
 SERVER="root@192.168.1.73"
-REMOTE_HTML="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/html/"
-REMOTE_NGINX="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/whisper_ui/conf/default.conf"
-REMOTE_COMPOSE="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/compose/whisper/whisper.yml"
+REMOTE_DIR="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e"
 
 # commit и push если есть изменения
 if ! git diff --quiet || ! git diff --cached --quiet; then
@@ -13,11 +11,16 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
   git push
 fi
 
-# копирование файлов
-scp html/index.html "$SERVER:$REMOTE_HTML"
-scp nginx/default.conf "$SERVER:$REMOTE_NGINX"
-scp docker-compose.yml "$SERVER:$REMOTE_COMPOSE"
+# на сервере: pull → cp → restart
+ssh "$SERVER" bash << 'EOF'
+  REMOTE_DIR="/srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e"
+  cd "$REMOTE_DIR/whisper-ui"
+  git pull origin main
+  cp html/index.html "$REMOTE_DIR/whisper_ui/html/"
+  cp html/config.json "$REMOTE_DIR/whisper_ui/html/"
+  cp nginx/default.conf "$REMOTE_DIR/whisper_ui/conf/default.conf"
+  cd "$REMOTE_DIR/compose/whisper"
+  docker compose -f whisper-ui-compose.yml restart whisper-ui
+EOF
 
-echo "Готово! Обновляю nginx..."
-ssh "$SERVER" "docker restart whisper-ui"
-echo "Задеплоено успешно."
+echo "✅ Готово! https://192.168.1.73:8443"
