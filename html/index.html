@@ -98,8 +98,11 @@ textarea { resize: vertical; }
     <input type="file" id="fileInput" accept="audio/*,video/*" multiple onchange="addFiles()">
     
     <div id="projectFolderNotice" class="project-notice">
-      📁 Папка проекта: <strong id="projectFolderPath"></strong>
+      📁 Папка проекта: <strong id="projectFolderPath">не выбрана</strong>
       <br>Транскрибация и prompt.txt сохраняются автоматически.
+      <br><a href="#" onclick="pickRootFolder(); return false;" style="color:#1976D2; font-size:12px;">
+        ⚡ Выбрать папку для проектов
+      </a>
     </div>
 
     <div class="row" style="margin-top:12px">
@@ -346,7 +349,6 @@ function setModelFromSaved(provider, savedModel) {
   const selectEl = document.getElementById(provider + '-model-select');
   const customEl = document.getElementById(provider + '-model-custom');
   
-  // Проверяем, есть ли такая модель в списке
   let found = false;
   for (const option of selectEl.options) {
     if (option.value === savedModel && option.value !== '__custom__') {
@@ -358,7 +360,6 @@ function setModelFromSaved(provider, savedModel) {
   }
   
   if (!found && savedModel && savedModel !== '__custom__') {
-    // Модель не из списка — показываем custom
     selectEl.value = '__custom__';
     customEl.value = savedModel;
     customEl.style.display = 'block';
@@ -421,26 +422,35 @@ function restoreRootFolder() {
 // ===== ROOT FOLDER MANAGEMENT =====
 async function pickRootFolder() {
   if (!window.showDirectoryPicker) {
-    alert('Используйте Chrome или Edge для работы с папками');
+    alert('Используйте Chrome или Edge для работы с папками.\nВыберите папку где будут создаваться проекты.');
     return;
   }
   try {
-    rootFolderHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+    rootFolderHandle = await window.showDirectoryPicker({ 
+      mode: 'readwrite',
+      startIn: 'documents'
+    });
     localStorage.setItem('root_folder_name', rootFolderHandle.name);
     updateProjectFolderUI(rootFolderHandle.name);
-    alert('Корневая папка выбрана: ' + rootFolderHandle.name + '\nТеперь для каждого аудиофайла будет создаваться подпапка.');
-  } catch(e) {}
+  } catch(e) {
+    console.debug('Выбор папки отменён');
+  }
 }
 
 function updateProjectFolderUI(folderName) {
-  document.getElementById('projectFolderPath').textContent = folderName + '/[имя_аудио]/';
-  document.getElementById('projectFolderNotice').classList.add('show');
+  if (folderName) {
+    document.getElementById('projectFolderPath').textContent = folderName + '/[имя_аудио]/';
+    document.getElementById('projectFolderNotice').classList.add('show');
+  } else {
+    document.getElementById('projectFolderPath').textContent = 'не выбрана';
+    document.getElementById('projectFolderNotice').classList.add('show');
+  }
 }
 
 // ===== PROJECT PROMPT MANAGEMENT =====
 async function editProjectPrompt() {
   if (!rootFolderHandle || !currentProjectPath) {
-    alert('Сначала выберите корневую папку и добавьте аудиофайл.');
+    alert('Сначала выберите корневую папку и добавьте аудиофайл.\n\nНажмите "📁 Корневая папка проектов" или добавьте аудиофайл.');
     return;
   }
   let currentPrompt = '';
@@ -450,7 +460,7 @@ async function editProjectPrompt() {
     await writeFileToProject('prompt.txt', newPrompt);
     document.getElementById('system-prompt').value = newPrompt;
     saveAllSettings();
-    alert('prompt.txt сохранён в папку проекта');
+    alert('✅ prompt.txt сохранён в папку проекта');
   }
 }
 
@@ -515,15 +525,6 @@ async function loadScenarioFile() {
     document.getElementById('scenario').value = await file.text();
     status.textContent = 'Файл загружен';
   }
-}
-
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
 }
 
 // ===== OPENROUTER API =====
@@ -714,8 +715,12 @@ function fmtTime(s) {
 
 function addFiles() {
   const input = document.getElementById('fileInput');
+  
+  // Если папка не выбрана — сразу предлагаем выбрать
   if (!rootFolderHandle && window.showDirectoryPicker) {
-    pickRootFolder().then(() => { if (rootFolderHandle) processNewFiles(input); });
+    pickRootFolder().then(() => {
+      processNewFiles(input);
+    });
   } else {
     processNewFiles(input);
   }
@@ -734,7 +739,7 @@ function processNewFiles(input) {
     renderFileItem(item);
     detectDuration(item);
     currentProjectPath = item.projectPath;
-    updateProjectFolderUI(rootFolderHandle ? rootFolderHandle.name : 'не выбрана');
+    updateProjectFolderUI(rootFolderHandle ? rootFolderHandle.name : null);
   }
   input.value = '';
 }
@@ -775,15 +780,24 @@ function clearList() {
   document.getElementById('fileList').innerHTML = ''; 
   document.getElementById('results').innerHTML = '';
   currentProjectPath = '';
-  document.getElementById('projectFolderNotice').classList.remove('show');
+  updateProjectFolderUI(null);
 }
 
 async function startAll() {
   if (!files.length) { alert('Добавьте файлы'); return; }
+  
+  // Если папка не выбрана — предлагаем перед транскрибацией
   if (!rootFolderHandle && window.showDirectoryPicker) {
-    const proceed = confirm('Корневая папка не выбрана. Хотите выбрать папку для автосохранения?');
-    if (proceed) await pickRootFolder();
+    const proceed = confirm(
+      '📁 Папка для сохранения не выбрана.\n\n' +
+      'При выборе папки для каждого аудиофайла будет создана подпапка с транскрипцией и prompt.txt.\n\n' +
+      'Нажать "Да" чтобы выбрать папку сейчас?'
+    );
+    if (proceed) {
+      await pickRootFolder();
+    }
   }
+  
   document.getElementById('startBtn').disabled = true;
   for (const item of files) { if (item.status !== 'done') await processFile(item); }
   document.getElementById('startBtn').disabled = false;
@@ -952,6 +966,8 @@ function copyResult(id) {
 
 // ===== INIT =====
 loadSettings();
+// Показываем уведомление даже если папка не выбрана
+updateProjectFolderUI(localStorage.getItem('root_folder_name') || null);
 </script>
 </body>
 </html>
