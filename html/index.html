@@ -103,9 +103,13 @@ textarea { resize: vertical; }
     </div>
 
     <div class="row" style="margin-top:12px">
-      <div><label>Язык:</label><select id="lang"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="">Авто</option></select></div>
+      <div><label>Язык:</label><select id="lang" onchange="updateWhisperPrompt()"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="">Авто</option></select></div>
       <div><label>Формат:</label><select id="output"><option value="txt">Текст</option><option value="srt">SRT</option><option value="vtt">VTT</option></select></div>
       <div><label>Модель Whisper:</label><select id="whisper-model" onchange="saveWhisperSettings()"><option value="quality">Качество (small)</option><option value="fast">Быстро (base)</option></select></div>
+    </div>
+    <div style="margin-top:8px">
+      <label>Подсказка Whisper: <span style="font-weight:normal;color:#888">предотвращает переключение языка и снижает артефакты</span></label>
+      <input type="text" id="whisper-prompt" oninput="saveWhisperSettings()">
     </div>
 
     <div id="fileList" style="margin-top:12px"></div>
@@ -300,6 +304,8 @@ function loadSettings() {
   onProviderChange();
   const wm = localStorage.getItem('whisper_model');
   if (wm) document.getElementById('whisper-model').value = wm;
+  const wp = localStorage.getItem('whisper_prompt');
+  document.getElementById('whisper-prompt').value = wp !== null ? wp : LANG_PROMPTS.ru;
   restoreRootFolder();
 }
 
@@ -577,8 +583,26 @@ function clearChat() {
   document.getElementById('messages').innerHTML = '<div class="msg assistant">Чат очищен.</div>';
 }
 
+const LANG_PROMPTS = {
+  ru: 'Это запись разговора на русском языке.',
+  en: 'This is a recording of a conversation in English.',
+  uk: 'Це запис розмови українською мовою.',
+  '': 'Это запись разговора на русском языке.'
+};
+
+function updateWhisperPrompt() {
+  const lang = document.getElementById('lang').value;
+  const el = document.getElementById('whisper-prompt');
+  const cur = el.value.trim();
+  if (!cur || Object.values(LANG_PROMPTS).includes(cur)) {
+    el.value = LANG_PROMPTS[lang] || '';
+    saveWhisperSettings();
+  }
+}
+
 function saveWhisperSettings() {
   localStorage.setItem('whisper_model', document.getElementById('whisper-model').value);
+  localStorage.setItem('whisper_prompt', document.getElementById('whisper-prompt').value);
 }
 
 // ===== TRANSCRIPTION =====
@@ -678,8 +702,10 @@ async function processFile(item) {
   const form = new FormData();
   form.append('audio_file', item.file);
   const asrPath = document.getElementById('whisper-model').value === 'fast' ? '/asr-fast' : '/asr';
-  let url = asrPath + '?output=' + output;
+  let url = asrPath + '?output=' + output + '&temperature=0&no_speech_threshold=0.8&condition_on_previous_text=false';
   if (lang) url += '&language=' + lang;
+  const whisperPrompt = document.getElementById('whisper-prompt').value.trim();
+  if (whisperPrompt) url += '&initial_prompt=' + encodeURIComponent(whisperPrompt);
 
   try {
     const text = await new Promise((resolve, reject) => {
