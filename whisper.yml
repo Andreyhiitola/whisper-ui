@@ -10,7 +10,7 @@ services:
       ports:                                                                                   
         - "9000:9000"
       environment:                                                                             
-        - ASR_MODEL=small
+        - ASR_MODEL=large-v3-turbo
         - ASR_ENGINE=openai_whisper
       volumes:
         - /srv/dev-disk-by-uuid-e3906cb9-c585-4088-9de4-278d2769849e/wisper_:/root/.cache/whisper      

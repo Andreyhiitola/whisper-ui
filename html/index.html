@@ -105,7 +105,7 @@ textarea { resize: vertical; }
     <div class="row" style="margin-top:12px">
       <div><label>Язык:</label><select id="lang" onchange="updateWhisperPrompt()"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="">Авто</option></select></div>
       <div><label>Формат:</label><select id="output"><option value="txt">Текст</option><option value="srt">SRT</option><option value="vtt">VTT</option></select></div>
-      <div><label>Модель Whisper:</label><select id="whisper-model" onchange="saveWhisperSettings()"><option value="quality">Качество (small)</option><option value="fast">Быстро (base)</option></select></div>
+      <div><label>Модель Whisper:</label><select id="whisper-model" onchange="saveWhisperSettings()"><option value="quality">Качество (large-v3-turbo)</option><option value="fast">Быстро (base)</option></select></div>
     </div>
     <div style="margin-top:8px">
       <label>Подсказка Whisper: <span style="font-weight:normal;color:#888">предотвращает переключение языка и снижает артефакты</span></label>
